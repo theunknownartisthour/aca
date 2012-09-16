@@ -1,0 +1,108 @@
+/*    <!-- The Art Crive Archive styles -->  */
+body{
+  background-color: white;  
+}
+.no-gutter {
+    margin-left: -20px;
+}
+.banner{
+  position: relative;
+  background-image:url(../img/seamless_patterns_14.jpg);
+  height: 150px;
+}
+.banner p{
+  position: absolute;
+  font-family: 'Arial-BoldItalicMT', 'Arial', sans-serif;
+  font-style: italic;
+}
+.the{
+  top: 20px;
+  left:30px;
+  font-size: 20pt;
+  color: white;
+}          
+.art{
+  top: 45px;
+  left:60px;
+  font-size: 72pt;
+  color: black;
+}
+.crime{
+  top: 90px;
+  left:15px;
+  font-size: 72pt;
+  color: white;
+}          
+.archive{
+  top: 113px;
+  left: 320px;
+  font-size: 20pt;
+  color: black;
+}         
+.user-access {
+  float: right;
+  margin: 10px;
+  padding: 5px;
+  background: #222;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  color: white;
+}
+.welcome{
+  color: #ccc;
+}
+a.sign-out{
+  color:white
+}
+a.sign-in{
+  color:white
+}
+.side-bars {
+  margin: 10px;
+  padding: 5px;
+  min-height: 350px;
+  border-style:solid; 
+  border-width: 2px;
+  border-radius:6px;
+  border-color: #aaa;"
+}
+.center-stage {
+  margin-top: 10px;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding: 20px;
+  border-style:solid; 
+  border-width: 2px;
+  border-radius:6px;
+  border-color: #aaa;"
+}
+.below-video{
+  margin-top: 20px; 
+  padding: 10px;
+}
+.description{
+  min-height: 200px;
+}
+.tags {
+  min-height: 20px;
+  background: #aaa;
+}
+.avatar {
+  min-height: 50px;
+}
+.comments{
+  min-height: 200px;
+  background: #aaa;
+}
+.example-styles{
+  background: #ffff66;
+  border:7px solid white;
+  color: navy;
+  font-family: 'Arial-BoldItalicMT', 'Arial', sans-serif;
+  font-size: 18px;
+  font-style: italic;
+  font-weight: bold;
+  padding: 10px;
+  #word-wrap: break-word;
+}

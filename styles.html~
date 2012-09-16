@@ -1,0 +1,140 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Simple Styles</title>
+
+      <!-- The Art Crive Archive styles -->
+     <style type="text/css">
+    .banner {
+      background-image:url(seamless_patterns_14.jpg);
+      width: auto;
+      height: 150px;
+      }
+    .banner p{
+      position: absolute;
+      font-family: 'Arial-BoldItalicMT', 'Arial', sans-serif;
+      font-style: italic;
+    }
+    .the{
+      top: 20px;
+      left:30px;
+      font-size: 20pt;
+      color: white;
+    }          
+    .art{
+      top: 45px;
+      left:60px;
+      font-size: 72pt;
+      color: black;
+    }
+    .crime{
+      top: 90px;
+      left:15px;
+      font-size: 72pt;
+      color: white;
+    }          
+    .archive{
+      top: 113px;
+      left: 320px;
+      font-size: 20pt;
+      color: black;
+    }         
+      
+    .welcome {
+      float: right;
+      margin: 10px;
+      padding: 10px;
+      background: #fff;
+      width: auto;
+      }
+      
+    a.sign-in:hover {
+      color: green;
+      text-decoration: underline;
+    }
+    
+    a.sign-in {
+      float: right;
+      margin: 10px;
+      padding: 10px;
+      background: #fff;
+      width: auto;
+      color: green;
+      text-decoration: none;
+    }
+    
+    a.sign-out {
+      color: red;
+      text-decoration: none;
+    }
+
+    a.sign-out:hover {
+      color: red;
+      text-decoration: underline;
+    }
+    
+    .side-bars {
+      background: #aaa;
+      padding: 10px;
+      min-height: 350px;
+      width: 240px
+    }
+      
+    .video_area {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    div.below_video div {
+      width: 600px;
+      margin: 10px;
+      margin-top: 20px; 
+      padding: 10px;
+      border-style:solid; 
+      border-width: 1px; 
+      border-color: #aaa;"
+    }
+    
+    .comments {
+      min-height: 200px;
+    }
+    
+    .avatar {
+      min-height: 50px;
+    }
+    
+    .tags {
+      min-height: 20px;
+    }
+      
+    .example-styles{
+      background: #ffff66;
+      border:7px solid white;
+      color: navy;
+      font-family: 'Arial-BoldItalicMT', 'Arial', sans-serif;
+      font-size: 18px;
+      font-style: italic;
+      font-weight: bold;
+      padding: 10px;
+      #word-wrap: break-word;
+     }
+      
+    </style>
+  </head>
+
+  <body>
+    <div class="banner">banner 
+      <div class="welcome"> Welcome, test@example.com! <a class="sign-out" href="/_ah/login?continue=http%3A//localhost%3A8083/&action=Logout">(Sign out)</a></div>
+      <a class="sign-in" href="/_ah/login?continue=http%3A//localhost%3A8083/">Sign in or register</a>
+    </div>
+    <div class="side-bars" >side bars</div>
+    <div class="video_area">
+        <iframe width="640" height="480" src="http://www.youtube.com/embed/uBZlYYii02g?feature=player_detailpage" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <div class="below_video">
+      <div class="comments">comments by poster</div>
+      <div class="avatar">user avatar</div>
+      <div class="tags" >data / meta-tags</div>
+    </div>
+  </body>
+</html>

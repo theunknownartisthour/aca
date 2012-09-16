@@ -1,0 +1,143 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>The Art Crime Archive</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+    <!-- Le styles -->
+    <link href="../static/css/bootstrap.css" rel="stylesheet">
+    <link href="../static/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="../static/css/docs.css" rel="stylesheet">
+    <link href="../static/js/google-code-prettify/prettify.css" rel="stylesheet">
+    <link href="../static/css/art-crime-archive.css" rel="stylesheet">
+    
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="../static/assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../static/assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../static/assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../static/assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../static/assets/ico/apple-touch-icon-57-precomposed.png">
+
+    <script type="text/javascript" async="" id="gauges-tracker" data-site-id="4f0dc9fef5a1f55508000013" src="//secure.gaug.es/track.js"></script><script type="text/javascript" async="" src="http://www.google-analytics.com/ga.js"></script><script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-146052-10']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+  </head>
+  <body data-spy="scroll" data-target=".bs-docs-sidebar" data-twttr-rendered="true">
+    <!-- Fluid grid system
+    ================================================== -->
+    <div class="row-fluid">
+      <div class="span12">
+        <div class="banner">
+          <p class="the">THE</p>
+          <p class="art">ART</p>
+          <p class="crime">CRIME</p>
+          <p class="archive">ARCHIVE</p>
+          <div class="user-access">{{greeting|safe}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span3 hidden-phone">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="side-bars">twitter feed</div>
+          </div>
+        </div>
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="side-bars">rss feed or recent posts</div>
+        </div>
+      </div>
+      </div>
+      <div class="span6">
+        <div class="center-stage">
+          <div class="vide-area">
+            <iframe class="youtube-player" type="text/html" width="640" height="385" src="http://www.youtube.com/embed/uBZlYYii02g?feature=player_detailpage" frameborder="0" allowfullscreen></iframe>
+          </div>
+            <div class="below-video description">decsription {{user}}</div>
+            <div class="below-video tags">meta-tags</div>
+            <div class="below-video avatar">user avatar</div>
+            <div class="below-video comments">comments</div>
+        </div>
+      </div>
+      <div class="span3">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="side-bars">navigation</div>
+          </div>
+        </div>
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="side-bars">contributors</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    <script src="../static/assets/js/jquery.js"></script>
+    <script src="../static/assets/js/google-code-prettify/prettify.js"></script>
+    <script src="../static/assets/js/bootstrap-transition.js"></script>
+    <script src="../static/assets/js/bootstrap-alert.js"></script>
+    <script src="../static/assets/js/bootstrap-modal.js"></script>
+    <script src="../static/assets/js/bootstrap-dropdown.js"></script>
+    <script src="../static/assets/js/bootstrap-scrollspy.js"></script>
+    <script src="../static/assets/js/bootstrap-tab.js"></script>
+    <script src="../static/assets/js/bootstrap-tooltip.js"></script>
+    <script src="../static/assets/js/bootstrap-popover.js"></script>
+    <script src="../static/assets/js/bootstrap-button.js"></script>
+    <script src="../static/assets/js/bootstrap-collapse.js"></script>
+    <script src="../static/assets/js/bootstrap-carousel.js"></script>
+    <script src="../static/assets/js/bootstrap-typeahead.js"></script>
+    <script src="../static/assets/js/bootstrap-affix.js"></script>
+    <script src="../static/assets/js/application.js"></script>
+
+   <!-- javascript for Art-Crime-Archive
+    ================================================== -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="../static/js/jquery.fitvids.js"></script>
+
+
+    <!-- Analytics
+    ================================================== -->
+    <script>
+      var _gauges = _gauges || [];
+      (function() {
+        var t   = document.createElement('script');
+        t.type  = 'text/javascript';
+        t.async = true;
+        t.id    = 'gauges-tracker';
+        t.setAttribute('data-site-id', '4f0dc9fef5a1f55508000013');
+        t.src = '//secure.gaug.es/track.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(t, s);
+      })();
+    </script>
+    <!-- Fits videos in fluid grid -->
+    <script>
+      $(document).ready(function(){
+        // Target your .container, .wrapper, .post, etc.
+        $("body").fitVids();
+      });
+    </script>
+  </body>
+</html>
