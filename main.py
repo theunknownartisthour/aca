@@ -24,17 +24,21 @@ class MainPage(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         if user:
-            greeting = ("<div class=\"welcome\">Welcome, %s! <a class=\"sign-out\" href=\"%s\">(sign out)</a></div>" %
+            greeting = ("<div class=\"signed-in\"> %s <a class=\"sign-out\" href=\"%s\">(sign out)</a></div>" %
                         (user.nickname(), users.create_logout_url("/")))
+            template_values = {
+                    'random': randint(0, 1),
+                    'greeting': greeting,
+                    'user': user.nickname(),
+                    }
         else:
             greeting = ("<a class=\"sign-in\" href=\"%s\">Sign in or register</a>" %
                         users.create_login_url("/"))
+            template_values = {
+                    'random': randint(0, 1),
+                    'greeting': greeting,
+                    }
 
-        template_values = {
-        'random': randint(0, 1),
-        'greeting': greeting,
-#        'user': user.nickname(),
-        }
         path = os.path.join(os.path.dirname(__file__), 'index.html' )
         self.response.out.write(template.render(path, template_values))
 

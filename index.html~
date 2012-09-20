@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -7,12 +8,11 @@
     <meta name="author" content="">
     
     <!-- Le styles -->
-    <link href="../static/assets/css/bootstrap.css" rel="stylesheet">
+    <link href="../static/css/bootstrap.css" rel="stylesheet">
     <link href="../static/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="../static/css/docs.css" rel="stylesheet">
     <link href="../static/js/google-code-prettify/prettify.css" rel="stylesheet">
     <link href="../static/css/art-crime-archive.css" rel="stylesheet">
-    
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -35,7 +35,6 @@
         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
-
     </script>
   </head>
   <body data-spy="scroll" data-target=".bs-docs-sidebar" data-twttr-rendered="true">
@@ -44,46 +43,45 @@
     <div class="row-fluid">
       <div class="span12">
         <div class="banner">
-          <p class="The">THE</p>
-          <p class="Art">ART</p>
-          <p class="Crime">CRIME</p>
-          <p class="Archive">ARCHIVE</p>
+          <p class="the">THE</p>
+          <p class="art">ART</p>
+          <p class="crime">CRIME</p>
+          <p class="archive">ARCHIVE</p>
           <div class="user-access">{{greeting|safe}}</div>
         </div>
       </div>
     </div>
     <div class="row-fluid">
-      <div class="span3">
+      <div class="span3 hidden-phone">
         <div class="row-fluid">
           <div class="span12">
-            <div class="side-bars">twitter feed</div>
+            <div class="left-side-bar">twitter feed</div>
           </div>
         </div>
       <div class="row-fluid">
         <div class="span12">
-          <div class="side-bars">rss feed or recent posts</div>
+          <div class="left-side-bar">rss feed or recent posts</div>
         </div>
       </div>
       </div>
       <div class="span6">
         <div class="center-stage">
-          <div class="vide-area">
             <iframe class="youtube-player" type="text/html" width="640" height="385" src="http://www.youtube.com/embed/uBZlYYii02g?feature=player_detailpage" frameborder="0" allowfullscreen></iframe>
-          </div>
-            <div class="below-video comments">decsription {{user}}</div>
-            <div class="below-video avatar">user avatar</div>
-            <div class="below-video tag">data / meta-tags</div>
+            <div class="below-video description">description</div>
+            <div class="below-video tags">meta-tags</div>
+            <div class="below-video avatar">{{user}} avatar and info</div>
+            <div class="below-video comments">comments</div>
         </div>
       </div>
       <div class="span3">
         <div class="row-fluid">
           <div class="span12">
-            <div class="side-bars">navigation</div>
+            <div class="right-side-bar">navigation</div>
           </div>
         </div>
         <div class="row-fluid">
           <div class="span12">
-            <div class="side-bars">contributors</div>
+            <div class="right-side-bar">contributors</div>
           </div>
         </div>
       </div>
@@ -115,7 +113,6 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="../static/js/jquery.fitvids.js"></script>
 
-
     <!-- Analytics
     ================================================== -->
     <script>
@@ -131,6 +128,7 @@
         s.parentNode.insertBefore(t, s);
       })();
     </script>
+
     <!-- Fits videos in fluid grid -->
     <script>
       $(document).ready(function(){
