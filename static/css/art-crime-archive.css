@@ -5,12 +5,13 @@ body{
 .banner{
   position: relative;
   margin-bottom: 10px;
-  background-image:url(../img/seamless_patterns_14.jpg);
-  height: 150px;
+/*  background-image:url(../img/seamless_patterns_14.jpg); */
+  height: 100px;
  }
- .banner_overlay{
+ .logo{
   position: absolute;
-  background-image:url(../img/AC1_NEW.png);
+  top: 30px;
+  left:50px;
 }
 .banner p{
   position: absolute;
@@ -45,20 +46,20 @@ body{
   float: right;
   margin: 10px;
   padding: 5px;
-  background: #222;
+  background: #eee;
   -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
   border-radius: 6px;
-  color: white;
+  color: black;
  }
 .signed-in{
-  color: #ccc;
+  color: #666;
  }
 a.sign-out{
-  color:white
+  color: #333;
  }
 a.sign-in{
-  color:white
+  color: black;
  }
 div[class*="side-bar"]{
   margin: 10px;

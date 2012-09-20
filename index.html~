@@ -43,11 +43,9 @@
     <div class="row-fluid">
       <div class="span12">
         <div class="banner">
-          <p class="the">THE</p>
-          <p class="art">ART</p>
-          <p class="crime">CRIME</p>
-          <p class="archive">ARCHIVE</p>
+          <div class="logo"><img alt="The Art Crime Archive" src="../static/img/AC5_NEW.png"></div>
           <div class="user-access">{{greeting|safe}}</div>
+          
         </div>
       </div>
     </div>
