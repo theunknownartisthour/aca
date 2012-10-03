@@ -10,8 +10,8 @@ body{
  }
  .logo{
   position: absolute;
-  top: 20px;
-  left:30px;
+  top: 30px;
+  left:50px;
 }
 .banner p{
   position: absolute;
@@ -84,17 +84,48 @@ div[class*="side-bar"]{
   margin-top: 20px;
   padding: 10px;
  }
-.description{
+.description-box{
   min-height: 200px;
- }
+  border-bottom: solid; 
+  border-width: 1px;
+  border-color: #888;
+
+}
+.description-box h1, h2, h3{
+  margin: 0px;
+  padding: 0px;
+  color: #000;
+  font-family: Trebuchet MS, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+
+}
+.description-box p{
+  color: #333;
+  font-family: Trebuchet MS, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
 .tags {
-  min-height: 20px;
-  background: #eee;
- }
-.avatar {
+  color: #000;
+  font-family: Trebuchet MS, Helvetica, sans-serif;
+  font-size: 12px;
+  border-bottom: solid; 
+  border-width: 1px;
+  border-color: #888;
+}
+.user {
   min-height: 50px;
- }
+  color: #000;
+  font-family: Trebuchet MS, Helvetica, sans-serif;
+  font-size: 12px;
+  border-bottom: solid; 
+  border-width: 1px;
+  border-color: #888;
+}
 .comments{
   min-height: 200px;
-  background: #eee;
+  color: #333;
+  font-family: Trebuchet MS, Helvetica, sans-serif;
+  font-size: 12px;
  }
