@@ -13,43 +13,14 @@ body{
   top: 30px;
   left:50px;
 }
-.banner p{
-  position: absolute;
-  font-family: 'Arial-BoldItalicMT', 'Arial', sans-serif;
-  font-style: italic;
- }
-.the{
-  top: 20px;
-  left:30px;
-  font-size: 20pt;
-  color: white;
- }          
-.art{
-  top: 45px;
-  left:60px;
-  font-size: 72pt;
-  color: black;
- }
-.crime{
-  top: 90px;
-  left:15px;
-  font-size: 72pt;
-  color: white;
- }          
-.archive{
-  top: 113px;
-  left: 320px;
-  font-size: 20pt;
-  color: black;
- }         
 .user-access {
   float: right;
-  margin: 10px;
-  padding: 5px;
-  background: #eee;
+  margin: 5px;
+  padding: 0px;
+/*  background: #eee;
   -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
-  border-radius: 6px;
+  border-radius: 6px; */
   color: black;
  }
 .signed-in{
@@ -63,12 +34,16 @@ a.sign-in{
  }
 div[class*="side-bar"]{
   margin: 10px;
-  padding: 5px;
+  padding: 4px;
   min-height: 350px;
+  color: #333;
+  font-family: Trebuchet MS, Helvetica, sans-serif;
+  font-size: 12px;
+
   border-style:solid; 
-  border-width: 3px;
-  border-radius:6px;
-  border-color: #eee;
+  border-width: 1px;
+  border-radius: 0px;
+  border-color: #888;
   }
 .left-side-bar {
   margin-left: 20px;
@@ -78,54 +53,47 @@ div[class*="side-bar"]{
  }
 .center-stage {
   padding: 10px;
-  padding-top: 20px;
  }
 .below-video{
-  margin-top: 20px;
-  padding: 10px;
- }
-.description-box{
-  min-height: 200px;
   border-bottom: solid; 
   border-width: 1px;
   border-color: #888;
-
-}
-.description-box h1, h2, h3{
+ }
+.title h1, h2, h3{
   margin: 0px;
   padding: 0px;
   color: #000;
   font-family: Trebuchet MS, Helvetica, sans-serif;
   font-size: 16px;
   font-weight: bold;
-
 }
-.description-box p{
+.view-status{
   color: #333;
+  background-color: white;
+  border: none;
   font-family: Trebuchet MS, Helvetica, sans-serif;
-  font-size: 12px;
+  font-size: 14px;
+}
+.article p, pre{
+  color: #333;
+  background-color: white;
+  border: none;
+  font-family: Trebuchet MS, Helvetica, sans-serif;
+  font-size: 14px;
 }
 
 .tags {
   color: #000;
   font-family: Trebuchet MS, Helvetica, sans-serif;
   font-size: 12px;
-  border-bottom: solid; 
-  border-width: 1px;
-  border-color: #888;
 }
 .user {
-  min-height: 50px;
   color: #000;
   font-family: Trebuchet MS, Helvetica, sans-serif;
   font-size: 12px;
-  border-bottom: solid; 
-  border-width: 1px;
-  border-color: #888;
 }
 .comments{
-  min-height: 200px;
   color: #333;
   font-family: Trebuchet MS, Helvetica, sans-serif;
   font-size: 12px;
- }
+}
