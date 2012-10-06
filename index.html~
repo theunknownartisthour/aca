@@ -11,7 +11,6 @@
     <link href="../static/css/bootstrap.css" rel="stylesheet">
     <link href="../static/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="../static/css/docs.css" rel="stylesheet">
-    <link href="../static/js/google-code-prettify/prettify.css" rel="stylesheet">
     <link href="../static/css/art-crime-archive.css" rel="stylesheet">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -64,11 +63,11 @@
             <!-- .nav, .navbar-search, .navbar-form, etc -->
             <ul class="nav">
               <li><a href="#">About</a></li>
-              <li {{the_archive}}><a href="#">The Archive</a></li>
-              <li {{my_articles}}><a href="/?author={{user}}">My Articles</a></li>
+              <li {{the_archive|safe}}><a href="/">The Archive</a></li>
               <li><a href="#">Fellows</a></li>
               <li><a href="#">Events</a></li>
-              <li><a href="/publish-article-form">Publish Article</a></li>
+              <li {{my_articles|safe}}><a href="/my-articles?author={{user}}">My Articles</a></li>
+              <li {{publish_article|safe}}><a href="/publish-article-form">Publish Article</a></li>
            </ul>
           </div>
      
@@ -84,23 +83,7 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-    <script src="../static/assets/js/jquery.js"></script>
-    <script src="../static/assets/js/google-code-prettify/prettify.js"></script>
-    <script src="../static/assets/js/bootstrap-transition.js"></script>
-    <script src="../static/assets/js/bootstrap-alert.js"></script>
-    <script src="../static/assets/js/bootstrap-modal.js"></script>
-    <script src="../static/assets/js/bootstrap-dropdown.js"></script>
-    <script src="../static/assets/js/bootstrap-scrollspy.js"></script>
-    <script src="../static/assets/js/bootstrap-tab.js"></script>
-    <script src="../static/assets/js/bootstrap-tooltip.js"></script>
-    <script src="../static/assets/js/bootstrap-popover.js"></script>
-    <script src="../static/assets/js/bootstrap-button.js"></script>
-    <script src="../static/assets/js/bootstrap-collapse.js"></script>
-    <script src="../static/assets/js/bootstrap-carousel.js"></script>
-    <script src="../static/assets/js/bootstrap-typeahead.js"></script>
-    <script src="../static/assets/js/bootstrap-affix.js"></script>
-    <script src="../static/assets/js/application.js"></script>
+    <script src="../static/js/jquery.js"></script>
 
    <!-- javascript for Art-Crime-Archive
     ================================================== -->

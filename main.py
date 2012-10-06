@@ -46,16 +46,17 @@ def get_articles(author=None):
     edit_link = ''
     view_status = ''
     if str(users.get_current_user()) == article.author:
-      edit_link = '<a href="\edit-article-form?id=%s">edit</a>' % article.key().id()
+      edit_link = '<a class="links" href="\edit-article-form?id=%s">edit</a>' % article.key().id()
       if article.view != 'Publish':
          view_status = '<a class="view-status" href="\edit-article-form?id=%s">not published</a>' % (article.key().id())
       
-    all_articles += '%s' % article.embed
-    all_articles += '<div class="below-video title">'
-    all_articles += '<h3>%s by %s %s %s</h3>' % (article.title, article.author, 
-                                                 edit_link, view_status)
-    all_articles += '%s</div>' % article.content
+    all_articles += '<div class="embed">%s</div>' % article.embed
+    all_articles += '<div class="title"> %s ' % article.title
+    all_articles += '<span class="author"> by %s </span>' % article.author.split('@',2)[0]
+    all_articles += '<span> %s %s </span></div>' % (view_status, edit_link)
+    all_articles += '<pre class="below-video article">%s</pre>' % article.content
     all_articles += '<div class="below-video tags">Tags: %s</div>' % article.tags
+    all_articles += '' #closing div for center-stage
     
   return all_articles
 
@@ -132,11 +133,14 @@ class PublishArticle(webapp2.RequestHandler):
     article.author = users.get_current_user().nickname()
     article.embed = self.request.get('embed-code')
     article.title = self.request.get('title')
-    article.content = '<pre class="article">' + self.request.get('content') + '</pre>'
+    article.content = self.request.get('content')
     article.tags = self.request.get('tags')
     article.view = self.request.get('view')
     article.put()
+    if article.view == 'Preview' or article.view == 'Retract':
+      return self.redirect('/my-articles')
     return self.redirect('/')
+
 
 class EditArticleForm(webapp2.RequestHandler):
   def get(self):
@@ -144,16 +148,10 @@ class EditArticleForm(webapp2.RequestHandler):
     article = Articles(parent=archive_key()).get_by_id(article_id, parent=archive_key())
     
     user = users.get_current_user()
-    if user:
-      greeting = "<span class=\"signed-in\"> %s</span>" % user.nickname()
-      template_values = {
-              'greeting': greeting,
-              'user': user.nickname(),
-              }
-    else:
+    if not user:
       return self.redirect(users.create_login_url("/"))
 
-    self.response.out.write('<html><body><p>Article will be published by: %s</p>' % greeting)
+    self.response.out.write('<html><body><p>Article will be published by: %s</p>' % user.nickname().split('@',2)[0])
     self.response.out.write("""
           <form action="/publish-it?id=%s" method="post">
             <div>Embed<br /><textarea name="embed-code" rows="6" cols="80">%s</textarea></div>
