@@ -64,10 +64,11 @@
             <!-- .nav, .navbar-search, .navbar-form, etc -->
             <ul class="nav">
               <li><a href="#">About</a></li>
-              <li class="active"><a href="#">The Archive</a></li>
+              <li {{the_archive}}><a href="#">The Archive</a></li>
+              <li {{my_articles}}><a href="/?author={{user}}">My Articles</a></li>
               <li><a href="#">Fellows</a></li>
               <li><a href="#">Events</a></li>
-               <li><a href="/post-article-form">Post Article</a></li>
+              <li><a href="/publish-article-form">Publish Article</a></li>
            </ul>
           </div>
      
@@ -75,23 +76,8 @@
       </div>
     </div>
     <div class="row-fluid">
-      <div class="span9">{{greeting|safe}}  </div>
-      <div class="span3 hidden-phone">
-        <div class="row-fluid">
-          <div class="span12">
-            <div class="left-side-bar">twitter feed</div>
-          </div>
-        </div>
-        <div class="row-fluid">
-          <div class="span12">
-            <div class="left-side-bar">trending or recent posts</div>
-          </div>
-        </div>
-        <div class="row-fluid">
-          <div class="span12">
-            <div class="right-side-bar">contributors</div>
-          </div>
-        </div>
+      <div class="span9">
+        <div class="center-stage">{{articles|safe}}</div>
       </div>
     </div>
 

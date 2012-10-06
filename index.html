@@ -64,11 +64,11 @@
             <!-- .nav, .navbar-search, .navbar-form, etc -->
             <ul class="nav">
               <li><a href="#">About</a></li>
-              <li class="active"><a href="#">The Archive</a></li>
+              <li {{the_archive|safe}}><a href="/">The Archive</a></li>
               <li><a href="#">Fellows</a></li>
               <li><a href="#">Events</a></li>
-               <li><a href="/my-articles">My Articles</a></li>
-               <li><a href="/publish-article-form">Publish Article</a></li>
+              <li {{my_articles|safe}}><a href="/my-articles?author={{user}}">My Articles</a></li>
+              <li {{publish_article|safe}}><a href="/publish-article-form">Publish Article</a></li>
            </ul>
           </div>
      

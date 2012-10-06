@@ -23,14 +23,21 @@ def archive_key(Archive_name=None):
   """Constructs a Datastore key for an Archive entity."""
   return db.Key.from_path('Archive', Archive_name or 'test_archive')
 
-def get_articles():
+def get_articles(author=None):
   """Retrieves articles from Archive entity and composes HTML."""
-  articles = db.GqlQuery("SELECT * "
-                          "FROM Articles "
-                          "WHERE ANCESTOR IS :1 "
-                          "ORDER BY date DESC LIMIT 10",
-                          archive_key())
-
+  if author is None:
+    articles = db.GqlQuery("SELECT * "
+                           "FROM Articles "
+                           "WHERE ANCESTOR IS :key "
+                           "ORDER BY date DESC LIMIT 20",
+                           key=archive_key())
+  else:
+    articles = db.GqlQuery("SELECT * "
+                           "FROM Articles "
+                           "WHERE ANCESTOR IS :key "
+                           "AND author = :by_author "
+                           "ORDER BY date DESC LIMIT 20",
+                           key=archive_key(), by_author = author)
 
   all_articles =''
 
@@ -52,46 +59,53 @@ def get_articles():
   return all_articles
 
 class MainPage(webapp2.RequestHandler):
-    def get(self):
-        user = users.get_current_user()
-        if user:
-            greeting = ("<div class=\"signed-in\"> %s <a class=\"sign-out\" href=\"%s\">(sign out)</a></div>" %
-                        (user.nickname(), users.create_logout_url("/")))
-            template_values = {
-                    'random': randint(0, 1),
-                    'greeting': greeting,
-                    'user': user.nickname(),
-                    'articles': get_articles()
-                    }
-        else:
-            greeting = ("<a class=\"sign-in\" href=\"%s\">Sign in or register</a>" %
-                        users.create_login_url("/"))
-            template_values = {
-                    'random': randint(0, 1),
-                    'greeting': greeting,
-                    }
+  def get(self):
+    the_archive = 'class="active"'
+    my_articles = ''
+    publish_article = ''
+    user = users.get_current_user()
 
-        path = os.path.join(os.path.dirname(__file__), 'index.html' )
-        self.response.out.write(template.render(path, template_values))
+    if user:
+      greeting = ("<div class=\"signed-in\"> %s <a class=\"sign-out\" href=\"%s\">(sign out)</a></div>" % (user.nickname(), users.create_logout_url("/")))
+      nickname = user.nickname()    
+    else:
+      greeting = ("<a class=\"sign-in\" href=\"%s\">Sign in or register</a>" %
+                  users.create_login_url("/"))
+      nickname = ''
+
+    if self.request.path == '/my-articles':
+        the_archive = ''
+        my_articles = 'class="active"'
+        publish_article = ''
+        articles = get_articles(nickname)
+    else:
+      articles = get_articles()
+
+    template_values = {
+            'random': randint(0, 1),
+            'the_archive': the_archive,
+            'my_articles': my_articles,
+            'publish_article': publish_article,
+            'greeting': greeting,
+            'user': nickname,
+            'articles': articles
+            }
+
+    path = os.path.join(os.path.dirname(__file__), 'index.html' )
+    self.response.out.write(template.render(path, template_values))
 
 class PublishArticleForm(webapp2.RequestHandler):
   def get(self):
     user = users.get_current_user()
     if user:
-        greeting = ("<div class=\"signed-in\"> %s <a class=\"sign-out\" href=\"%s\">(sign out)</a></div>" %
-                    (user.nickname(), users.create_logout_url("/")))
-        template_values = {
-                'greeting': greeting,
-                'user': user.nickname(),
-                }
+      greeting = "<span class=\"signed-in\"> %s</span>" % user.nickname()
+      template_values = {
+              'greeting': greeting,
+              'user': user.nickname(),
+              }
     else:
-        greeting = ("<a class=\"sign-in\" href=\"%s\">Sign in or register</a>" %
-                    users.create_login_url("/"))
-        template_values = {
-                'random': randint(0, 1),
-                'greeting': greeting,
-                }
-    self.response.out.write('<html><body>Article will be posted by: %s' % greeting)
+      
+    self.response.out.write('<html><body><p>Article will be posted by: %s</p>' % greeting)
     self.response.out.write("""
           <form action="/publish-it" method="post">
             <div>Embed-code<br /><textarea name="embed-code" rows="6" cols="80"></textarea></div>
@@ -107,14 +121,13 @@ class PublishArticleForm(webapp2.RequestHandler):
 
 class PublishArticle(webapp2.RequestHandler):
   def post(self):
-
     if self.request.get('id') is not '':
       article_id = int(self.request.get('id'))
       article = Articles(parent=archive_key()).get_by_id(article_id, parent=archive_key())
     else:
       article = Articles(parent=archive_key())
 
-    article.author = users.get_current_user().nickname()
+    article.author = nickname
     article.embed = self.request.get('embed-code')
     article.title = self.request.get('title')
     article.content = '<pre class="article">' + self.request.get('content') + '</pre>'
@@ -160,6 +173,7 @@ class EditArticleForm(webapp2.RequestHandler):
                  sub('<[^>]*>', '', article.content), article.tags))
 
 app = webapp2.WSGIApplication([('/', MainPage),
+                               ('/my-articles', MainPage),                               
                                ('/publish-article-form', PublishArticleForm),
                                ('/edit-article-form', EditArticleForm),
                                ('/publish-it', PublishArticle)],
