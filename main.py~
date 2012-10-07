@@ -46,7 +46,7 @@ def get_articles(author=None):
     edit_link = ''
     view_status = ''
     if str(users.get_current_user()) == article.author:
-      edit_link = '<a class="links" hrefs="\edit-article-form?id=%s">edit</a>' % article.key().id()
+      edit_link = '<a class="links" href="\edit-article-form?id=%s">edit</a>' % article.key().id()
       if article.view != 'Publish':
          view_status = '<a class="view-status" href="\edit-article-form?id=%s">not published</a>' % (article.key().id())
       
@@ -56,45 +56,46 @@ def get_articles(author=None):
     all_articles += '<span> %s %s </span></div>' % (view_status, edit_link)
     all_articles += '<pre class="below-video article">%s</pre>' % article.content
     all_articles += '<div class="below-video tags">Tags: %s</div>' % article.tags
-    all_articles += '' #closing div for center-stage
     
   return all_articles
 
 class MainPage(webapp2.RequestHandler):
   def get(self):
-    the_archive = 'class="active"'
-    my_articles = ''
-    publish_article = ''
+    template_data = {
+            'the_archive': 'class="active"',
+            'my_articles': '',
+            'publish_article': '',
+            'about': '',
+            'center_stage': get_articles()
+            }
     user = users.get_current_user()
-
     if user:
-      greeting = ("<div class=\"signed-in\"> %s <a class=\"sign-out\" href=\"%s\">(sign out)</a></div>" % (user.nickname(), users.create_logout_url("/")))
-      nickname = user.nickname()    
+      template_data.update({'greeting': ("<div class=\"signed-in\"> %s <a class=\"sign-out\" href=\"%s\">(sign out)</a></div>" % (user.nickname(), users.create_logout_url("/")))})
+      template_data.update({'nickname': user.nickname()})
     else:
-      greeting = ("<a class=\"sign-in\" href=\"%s\">Sign in or register</a>" %
-                  users.create_login_url("/"))
-      nickname = ''
+      template_data.update({'greeting': ("<a class=\"sign-in\" href=\"%s\">Sign in or register</a>" % users.create_login_url("/"))})
+      template_data.update({'nickname': ''})
 
     if self.request.path == '/my-articles':
-        the_archive = ''
-        my_articles = 'class="active"'
-        publish_article = ''
-        articles = get_articles(nickname)
-    else:
-      articles = get_articles()
+      template_data.update({
+        'the_archive': '',
+        'my_articles': 'class="active"',
+        'publish_article': '',
+        'about': '',
+        'center_stage': get_articles(template_data['nickname'])})
 
-    template_values = {
-            'random': randint(0, 1),
-            'the_archive': the_archive,
-            'my_articles': my_articles,
-            'publish_article': publish_article,
-            'greeting': greeting,
-            'user': nickname,
-            'articles': articles
-            }
+    if self.request.path == '/about':
+      template_data.update({
+        'the_archive': '',
+        'my_articles': '',
+        'publish_article': '',
+        'about': 'class="active"',
+        'center_stage': '<pre class="below-video article">%s</pre>' %
+           'Everyabout The Art|Crime Archive'})
 
     path = os.path.join(os.path.dirname(__file__), 'index.html' )
-    self.response.out.write(template.render(path, template_values))
+    self.response.headers['X-XSS-Protection'] = '0' #prevents blank embed after post
+    self.response.out.write(template.render(path, template_data))
 
 class PublishArticleForm(webapp2.RequestHandler):
   def get(self):
@@ -168,7 +169,8 @@ class EditArticleForm(webapp2.RequestHandler):
                  sub('<[^>]*>', '', article.content), article.tags))
 
 app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/my-articles', MainPage),                               
+                               ('/my-articles', MainPage), 
+                               ('/about', MainPage),                               
                                ('/publish-article-form', PublishArticleForm),
                                ('/edit-article-form', EditArticleForm),
                                ('/publish-it', PublishArticle)],

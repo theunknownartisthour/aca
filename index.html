@@ -39,15 +39,11 @@
   <body data-spy="scroll" data-target=".bs-docs-sidebar" data-twttr-rendered="true">
     <!-- Fluid grid system
     ================================================== -->
-    <div class="row-fluid">
-      <div class="span12">
         <div class="banner">
-          <div class="logo"><img alt="The Art Crime Archive" src="../static/img/AC5_small.png"></div>
+          <div class="logo"><a href="/"><img alt="The Art Crime Archive" src="../static/img/AC5_small.png"></a></div>
           <div class="user-access">{{greeting|safe}}</div>
         </div>
-      </div>
-    </div>
-    <div class="navbar">
+    <div class="navbar navbar-mod">
       <div class="navbar-inner">
         <div class="container">
      
@@ -62,12 +58,12 @@
           <div class="nav-collapse">
             <!-- .nav, .navbar-search, .navbar-form, etc -->
             <ul class="nav">
-              <li><a href="#">About</a></li>
               <li {{the_archive|safe}}><a href="/">The Archive</a></li>
-              <li><a href="#">Fellows</a></li>
-              <li><a href="#">Events</a></li>
+<!--               <li><a href="#">Fellows</a></li>
+              <li><a href="#">Events</a></li> -->
               <li {{my_articles|safe}}><a href="/my-articles?author={{user}}">My Articles</a></li>
-              <li {{publish_article|safe}}><a href="/publish-article-form">Publish Article</a></li>
+              <li {{publish_article|safe}}><a href="/publish-article-form">Create Article</a></li>
+              <li {{about|safe}}><a href="/about">About</a></li>
            </ul>
           </div>
      
@@ -76,7 +72,7 @@
     </div>
     <div class="row-fluid">
       <div class="span9">
-        <div class="center-stage">{{articles|safe}}</div>
+        <div class="center-stage">{{center_stage|safe}}</div>
       </div>
     </div>
 
