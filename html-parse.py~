@@ -1,0 +1,5 @@
+from lxml import etree, html
+
+def innerHTML(file, tag):
+  tree = html.parse(file)
+  return ''.join([etree.tostring(child) for child in tree.xpath(tag)[0].iterdescendants()])

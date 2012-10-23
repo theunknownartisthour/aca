@@ -1,0 +1,274 @@
+(defn dec-terms
+  "dec pos bound terms, inc neg bound terms
+  does not affect live terms (in sub-vectors)"
+  [abs]
+  (vec (show-terms 
+      (clojure.walk/prewalk 
+       #(if (vector? %) 
+          (hide-terms %)
+          (if (number? %) 
+            (if (pos? %)
+              (dec %) 
+              (inc %)) %)) (seq abs)))))
+
+(defn hide-terms
+  "convert pos bound terms to char"
+  [abs]
+  (clojure.walk/prewalk #(if (number? %)
+                           (char (+ % 48))
+                           %)
+                         abs))
+(defn show-terms
+  "convert char to bound terms"
+  [abs]
+  (clojure.walk/prewalk #(if (char? %)
+                           (- (int %) 48)
+                           %)
+                        abs))
+
+(defn peel-term
+  [term]
+    (let [peeled-term (if (and (= 1 (count term))
+                               (coll? (first term)))
+                        (first term)
+                        term)]
+  (if (= peeled-term term)
+    term
+    (recur peeled-term))))
+
+(defn replace-term
+  "Performs replacement operation of all 1 or -1 terms with 
+  abstraction operand, adjusts the absolute value of remaining
+  bound terms."
+  [terms]
+  (let [operator (first terms)
+        operand (second terms)
+        operator-kill? (try (= -1 (last operator))
+                     (catch Exception e false))
+        dec-op (dec-terms operator)
+        result (if operand
+                 (clojure.walk/postwalk-replace
+                  {0 operand}
+                  dec-op)
+                 operator)
+        result (if operator-kill?
+                 (pop result)
+                 result)
+        ;disolve list if subsustitued into first position
+        result (if (and (= 0 (first dec-op))
+                        (seq? (first result)))
+                 (into (vec (first result))
+                       (next result))
+                 result)]
+    result))
+
+(defn recu
+  "turns off recur for debug"
+  ([x] x)
+  ([x & more] [x more]))
+
+(defn eval-terms
+  "Replaces terms with operands until abstraction is complete"
+  [terms]
+  (let [terms terms ;for debug
+        seq-terms? (seq? terms)
+        operator (first terms)
+        operand (fnext terms)
+        more-operands (nnext terms)
+        more-terms? (if (and seq-terms?
+                             (vector? operator))
+                      (not-every?
+                       nil? 
+                       (flatten
+                        (clojure.walk/postwalk 
+                         #(if (vector? %)
+                            nil %)
+                         (seq operator)))))]
+    (cond
+     (and seq-terms?
+          (not more-terms?))
+       (recur (seq (into (into
+                         operator
+                         (if operand (list operand)))
+                        more-operands)))
+     (and seq-terms?
+          operand)
+       (recur (cons (replace-term
+                    (list operator
+                          operand))
+                   more-operands))
+     :else 
+     (if seq-terms?
+       (into [] (clojure.walk/postwalk 
+                 #(if (and (seq? %)
+                           (vector? (first %))) 
+                    (reduce-term %) %) (seq operator)))
+       terms))))
+
+(defn beta-reduce
+  [terms]
+  (let [terms terms ;for debug
+        seq-terms? (seq? terms)
+        operator (first terms)
+        operand (fnext terms)
+        more-operands (nnext terms)]
+    (if (vector? operand) 
+      (cons (eval-terms
+                         (list operator
+                               operand))
+                        more-operands)
+      ["beta-replace" terms]
+       )))
+
+(defn reduce-term
+  [terms]
+  (let [terms terms ;for debug
+        seq-terms? (seq? terms)
+        operator (first terms)
+        operand (fnext terms)
+        more-operands (nnext terms)
+        enough-operands? (pos? (- (count more-operands)
+                                  (try (count operator)
+                                    (catch Exception e 0))
+                                  -2))]
+    (if enough-operands? 
+      (if (vector? operand) 
+        (cons (eval-terms (list operator operand))
+              more-operands)
+        ["beta-reduce" terms])
+      terms)))
+
+
+(defn inc-terms
+  "inc pos bound terms, dec neg bound terms.
+  Effects hidden terms"
+  [abs]
+  (clojure.walk/prewalk
+   #(if (number? %)
+      (if (pos? %) 
+        (inc (int %)) 
+        (dec (int %)))
+      %)
+   (clojure.walk/prewalk
+    #(if (char? %)
+       (if (< 48 (int %))
+         (char (inc (int %)))
+         (char (dec (int %))))
+       %) abs)))
+
+(defn beta-replace
+  "Performs replacement operation of all 1 or -1 terms with 
+  bound operand, adjusts the absolute value of remaining
+  bound terms. Hides non-kill bound terms. Operator must have
+  at least one valid un-hidden bound term.  Operand can be
+  a bound term, or list of bound terms
+  and/or free terms"
+  [terms]
+  (let [operator (first terms)
+        operand (second terms)
+        operator-kill? (try (= -1 (last operator))
+                     (catch Exception e false))
+        operand-kill? (try (neg? operand)
+                        (catch Exception e false))
+        operand (if operator-kill?
+                  (try (- (Math/abs operand))
+                    (catch Exception e operand))
+                  operand)
+        operand (if (and operator-kill?
+                        (list? operand))
+                  (clojure.walk/prewalk
+                   #(if (list? %) 
+                      (remove vector? %) 
+                      (if (integer? %) (- %)))
+                   operand)
+                  operand)
+        dec-op (dec-terms operator)
+        kill-set (if (not (seq? operand)) 
+                      (set (list operand)) 
+                      (set operand))
+        kill-voids (clojure.set/intersection
+                    (set (map - (keep 
+                                 #(if (integer? %) %)
+                                 (show-terms dec-op))))
+                    kill-set)
+        kill-terms (try (sort-by
+                    + (seq (clojure.set/difference 
+                            kill-set 
+                            kill-voids )))
+                     (catch Exception e nil))
+        result (if operand
+                 (if operand-kill?
+                   (into (inc-terms operator)
+                         [-1])
+                   ;still need to check if kill void
+                   (if (and operator-kill?
+                            (not (integer? operand)))
+                     (vec (remove
+                           (partial = 0) 
+                           (into dec-op kill-terms)))
+                     (clojure.walk/postwalk-replace
+                      {0 (hide-terms operand)}
+                      dec-op)))
+                 operator)
+        ;disolve list if first
+        result (if (and (= 0 (first dec-op))
+                        (seq? (first result)))
+                 (into (vec (first result))
+                       (next result))
+                 result)
+        ;remove voided kill-terms
+        result (if (seq kill-voids)
+                 (vec (remove 
+                     (set (map - (remove 
+                                  neg? 
+                                  (flatten (show-terms result)))))
+                             result))
+                 result)]
+    result))
+
+;no application
+(= (eval-terms [1]) [1])
+(= (eval-terms '([1])) [1])
+(= (eval-terms '([1 2])) [1 2])
+(= (eval-terms [1 -2]) [1 -2])
+(= (eval-terms '([1 -2])) [1 -2])
+
+;applications
+(= (eval-terms '([1] [1])) [1])
+(= (eval-terms '([1 -2] [1] [1])) [1])
+(= (eval-terms '([1 -2] [1 -2] [1])) [1 -2])
+(= (eval-terms '([2 -1] [1 -2] [1])) [1])
+(= (eval-terms '([[1 2] [1] [1]] [1] [1])) [1])
+(= (eval-terms '([1 3 (2 3)] [1] [1] [1])) [1])
+(= (eval-terms '([1 3 (2 3)] [1 -2] [1 -2] [1 2])) [1 2])
+(= (eval-terms '([1 3 (2 3)] [1 -2] [1 -2] [1])) [1])
+
+;passes
+(eval-terms '([[1 2] [1] [1]] [1] [1]))
+(eval-terms '([[1 2] [1] [1]] [1]))
+(eval-terms '([[1 2] [1] [1]]))
+(eval-terms '([1 2] [1] [1]))
+(eval-terms '([[1] 1] [1]))
+(eval-terms '([[1] [1]]))
+(eval-terms '([1] [1]))
+(eval-terms '([[1]]))
+(eval-terms '([1]))
+(eval-terms '([1] [1]))
+
+;beta reduction tests
+(= (eval-terms '([[1 2] ([1] [1 2])])) [[1 2] 1])
+(= (eval-terms '([1 ([1 2] [1 2])])) [1 '([1 2] [1 2])])
+(= (eval-terms [[1 2] 1]) [[1 2] 1])
+(= (eval-terms '([1 2] [1 2])) [[1 2] 1])
+(= (eval-terms '([2 (2 1)] [1])) [1 '(1 [1])])
+
+;passing
+(eval-terms '([1] [1 2] [1]))
+(eval-terms '([2 (1 (1 2))] [1]))
+
+;beta replacment tests
+(= (beta-replace '([2 -1] -1)) [3 -2 -1])
+(= (beta-replace '([1 -3 -2][1])) [[1] -2 -1])
+
+(beta-replace '([1 -3 -2] 1))
+

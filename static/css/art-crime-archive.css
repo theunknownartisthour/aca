@@ -9,12 +9,12 @@ body{
   position: relative;
   margin-bottom: 10px;
 /*  background-image:url(../img/seamless_patterns_14.jpg); */
-  height: 100px;
 }
 .logo{
-  position: absolute;
-  top: 30px;
-  left:50px;
+  margin-bottom: 5px;
+  margin-left: 15px;
+  overflow: hidden;
+    clear: both;
 }
 .user-access {
   float: right;
@@ -57,6 +57,7 @@ div[class*="side-bar"]{
 .center-stage {
   padding: 10px;
   padding-top: 0px;
+  height: auto;
  }
 .below-video{
   border-bottom: solid; 
@@ -89,9 +90,15 @@ div[class*="side-bar"]{
 .view-status {
   color: #DE5016;
 }
-.article p, pre{
+.article pre{
   padding: 5px;
   margin: 0px;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap; /* Mozilla-based browsers */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap; /* Opera 7+ */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+  word-break: normal;
   color: #333;
   background-color: white;
   border: none;

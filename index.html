@@ -35,13 +35,14 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
+    {{style|safe}}
   </head>
   <body data-spy="scroll" data-target=".bs-docs-sidebar" data-twttr-rendered="true">
     <!-- Fluid grid system
     ================================================== -->
         <div class="banner">
-          <div class="logo"><a href="/"><img alt="The Art Crime Archive" src="../static/img/AC5_small.png"></a></div>
           <div class="user-access">{{greeting|safe}}</div>
+          <div class="logo"><a href="/"><img alt="The Art Crime Archive" src="../static/img/AC5_small.png"></a></div>
         </div>
     <div class="navbar navbar-mod">
       <div class="navbar-inner">
@@ -86,7 +87,6 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="../static/js/bootstrap.js"></script>
 
-
     <!-- Analytics
     ================================================== -->
     <script>
@@ -107,7 +107,7 @@
     <script>
       $(document).ready(function(){
         // Target your .container, .wrapper, .post, etc.
-        $("body").fitVids();
+        $(".center-stage").fitVids({ customSelector: "object[src^='/']"});
       });
     </script>
   </body>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>jQuery Modal Contact Demo</title>
+  <meta name="author" content="Jake Rocheleau">
+  <link rel="stylesheet" type="text/css" media="all" href="comment.css">
+  <link rel="stylesheet" type="text/css" media="all" href="fancybox/jquery.fancybox.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script type="text/javascript" src="fancybox/jquery.fancybox.js?v=2.0.6"></script>
+</head>
+
+<body>
+<div id="wrapper">
+
+	<p><a class="modalbox" href="#inline">add comment</a></p>
+</div>
+
+<!-- hidden inline form -->
+<div id="inline">
+	<h2>Comment on: [[Title]]</h2>
+
+	<form id="comment-form" name="comment" action="#" method="post">
+		<label for="user">By: [[User]]</label>
+		<br />
+		<br />
+		<label for="comment-box">Enter a comment</label>
+		<textarea id="comment-text" name="comment-text" class="txtarea"></textarea>
+		
+		<button id="publish"> Publish comment </button>
+	</form>
+</div>
+
+<!-- basic fancybox setup -->
+<script type="text/javascript">
+	$(document).ready(function() {
+		$(".modalbox").fancybox();
+		$("#comment").submit(function() { return false; });
+
+		
+		$("#publish").on("click", function(){
+			var msgval    = $("#comment-text").val();
+			var msglen    = msgval.length;
+			
+			if(msglen < 10) {
+				$("#msg").addClass("error");
+			}
+			else if(msglen >= 10){
+				$("#msg").removeClass("error");
+			}
+			
+			if(msglen >= 10) {
+				// hide the btn so the user can't click again
+				$("#publish").replaceWith("<em>publishing...</em>");
+				
+				$.ajax({
+					type: 'POST',
+					url: 'sendmessage.php',
+					data: $("#comment").serialize(),
+					success: function(data) {
+						if(data == "true") {
+							$("#comment").fadeOut("fast", function(){
+								$(this).before("<p><strong>Your comment has been posted.</strong></p>");
+								setTimeout("$.fancybox.close()", 1000);
+							});
+						}
+					}
+				});
+			}
+		});
+	});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,431 @@
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;}
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Cambria;
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Tahoma;
+	panose-1:2 11 6 4 3 5 4 4 2 4;}
+@font-face
+	{font-family:Times;
+	panose-1:2 2 6 3 5 4 5 2 3 4;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+h1
+	{mso-style-link:"Heading 1 Char";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:16.0pt;
+	font-family:"Cambria","serif";}
+p.MsoFootnoteText, li.MsoFootnoteText, div.MsoFootnoteText
+	{mso-style-link:"Footnote Text Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";}
+p.MsoCommentText, li.MsoCommentText, div.MsoCommentText
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+	{mso-style-link:"Header Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{mso-style-link:"Footer Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+span.MsoFootnoteReference
+	{vertical-align:super;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;}
+p.MsoCommentSubject, li.MsoCommentSubject, div.MsoCommentSubject
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+	{mso-style-link:"Balloon Text Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	font-size:8.0pt;
+	font-family:"Tahoma","sans-serif";}
+p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.5in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+span.HeaderChar
+	{mso-style-name:"Header Char";
+	mso-style-link:Header;}
+span.FooterChar
+	{mso-style-name:"Footer Char";
+	mso-style-link:Footer;}
+span.BalloonTextChar
+	{mso-style-name:"Balloon Text Char";
+	mso-style-link:"Balloon Text";
+	font-family:"Tahoma","sans-serif";}
+span.FootnoteTextChar
+	{mso-style-name:"Footnote Text Char";
+	mso-style-link:"Footnote Text";}
+span.il
+	{mso-style-name:il;}
+span.Heading1Char
+	{mso-style-name:"Heading 1 Char";
+	mso-style-link:"Heading 1";
+	font-family:"Cambria","serif";
+	font-weight:bold;}
+ /* Page Definitions */
+ @page WordSection1
+	{size:8.5in 11.0in;
+	margin:.7in .7in .7in .7in;}
+div.WordSection1
+	{page:WordSection1;}
+ /* List Definitions */
+ ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+
+<body lang=EN-US link=blue vlink=purple>
+
+<div class=WordSection1>
+
+<p class=MsoNormal align=center style='text-align:center'><b>The Art/Crime
+Archive: A Place for Reactions to Boredom</b></p>
+
+<p class=MsoNormal align=center style='text-align:center'>&nbsp;</p>
+
+<p class=MsoNormal align=center style='text-align:center'>Brian
+Goeltzenleuchter, Paul Kaplan, and Dan Salmonsen</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The Art Crime Archive (ACA) is a collaborative laboratory,
+teaching center, and web-based platform devoted to the study of the shadow
+space where art and crime overlap.  The ACA, housed in SDSU’s Institute for
+Public and Urban Affairs (IPUA), is organized by an artist (Brian
+Goeltzenleuchter), a criminologist (Paul Kaplan), and computer engineer (Dan
+Salmonsen).  The Archive’s method involves locating, archiving, and studying
+visual, audio, and text artifacts that illuminate the cultural similarities
+between transgressive art and criminal behaviors.   Put another way, The ACA
+investigates ‘criminal art’ and ‘creative crime.’ The work product is a dynamic
+archive which can be configured and re-configured for a multiplicity of
+contexts—art exhibitions, academic presentations, community awareness panels,
+etc. Ultimately, the Archive aims to foment a dialectical interpretation of art
+and crime.  </p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The ACA invites submissions of ‘criminal art’ and/or
+‘creative crime’ to its web-based platform:  artcrimearchive.org.<a
+href="#_ftn1" name="_ftnref1" title=""><span class=MsoFootnoteReference><span
+class=MsoFootnoteReference><span style='font-size:12.0pt;font-family:"Times New Roman","serif"'>[1]</span></span></span></a> 
+Users can easily upload art/crime images, video, text, and sound to the
+website.  Users can then comment on their own and other submissions, and also
+rate submissions on scales of ‘artistry’ and/or ‘criminality.’  Submissions can
+be nominated for permanent inclusion in the ACA by registered users; these
+submissions can then be evaluated by ACA Fellows (explained below) or
+Directors.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>These data enable a range of analytic and socio-aesthetic
+outcomes, such as:</p>
+
+<p class=MsoListParagraphCxSpFirst style='text-indent:-.25in'><span
+style='font-family:"Times","serif"'>-<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Peer-reviewed journal articles focused on ‘case studies’ of
+particular art/crime artifacts submitted to the ACA</p>
+
+<p class=MsoListParagraphCxSpMiddle style='text-indent:-.25in'><span
+style='font-family:"Times","serif"'>-<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Peer-reviewed journal articles addressing this post-structural,
+new media archive as a dynamic agent (as opposed to a passive object)</p>
+
+<p class=MsoListParagraphCxSpMiddle style='text-indent:-.25in'><span
+style='font-family:"Times","serif"'>-<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Peer-reviewed journal articles about categories of artifacts
+(e.g., comparing ACA user ratings of graffiti to tattoos—analyzing perceptions
+of ‘criminality’ or ‘artistry’)</p>
+
+<p class=MsoListParagraphCxSpMiddle style='text-indent:-.25in'><span
+style='font-family:"Times","serif"'>-<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Peer-reviewed journal articles based on the use of cutting edge
+image visualization software to explore patterns in archived images</p>
+
+<p class=MsoListParagraphCxSpMiddle style='text-indent:-.25in'><span
+style='font-family:"Times","serif"'>-<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Books co-authored by the Directors and/or Fellows (e.g., an
+edited volume focusing on projects developed by Fellows using ACA data)</p>
+
+<p class=MsoListParagraphCxSpMiddle style='text-indent:-.25in'><span
+style='font-family:"Times","serif"'>-<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Critical engagements with more explicitly policy oriented
+artifacts in the ACA (e.g., a panel discussion of the creativity of ‘gang
+monikers’ listed in gang injunction documents, to include a scholar of gangs, a
+gang member, and a poet)</p>
+
+<p class=MsoListParagraphCxSpLast style='text-indent:-.25in'><span
+style='font-family:"Times","serif"'>-<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Exhibitions curated from archival documents (e.g., “Criminal Art
+&amp; Creative Crime: Cultural Perceptions of Transgression” is a curatorial
+project currently in development by Goeltzenleuchter)</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><i>Fellows</i></p>
+
+<p class=MsoNormal>A key feature of the ACA is its community of Fellows. 
+Fellows are appointed by the Directors and come from a diversity of
+backgrounds, including professional academics, artists, students, justice
+system professionals, activists, and reformed criminals. A key role for Fellows
+will be to evaluate nominated uploads to the web platform for inclusion in the
+Archive. Ultimately, we envision Fellows as both data providers and data
+analysts; all Fellows have access to all Archive materials, metadata, and
+analytics for their own scholarly, creative, or other relevant works.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><i>Theoretical Significance</i></p>
+
+<p class=MsoNormal>Some post-structural theorists argue that Modernity is
+‘boring’ because it objectifies human subjects with typologies, organizations,
+laws, bureaucracies, and categories—its ‘boxes.’  At the same time, we are
+perpetually invited from one box to the other—tricked into thinking we are
+having a subjective moment, usually through the act of consuming. Arguably, all
+of modernity’s boxes possess a certain ‘house of cards’ aspect that most of us
+don’t perceive directly but vaguely intuit.  Hence the idea of ‘postmodern
+malaise.’<a href="#_ftn2" name="_ftnref2" title=""><span
+class=MsoFootnoteReference><span class=MsoFootnoteReference><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif"'>[2]</span></span></span></a>
+Sometimes the malaise translates into action, from the tiniest
+‘microresistance’ of tagging a wall to the extreme of killing people with mail
+bombs.  In a sense, Jean-Michel Basquiat and Ted Kazcynski were both reacting
+to boredom.<a href="#_ftn3" name="_ftnref3" title=""><span
+class=MsoFootnoteReference><span class=MsoFootnoteReference><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif"'>[3]</span></span></span></a></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Branches of thought and discourse about art and crime run
+parallel. An important school in contemporary art theory argues that ‘the
+post-modern flux’ means that art should be ‘relational:’ “open-ended,
+interactive, and resistant to closure” (Bishop, 2004, p. 52). Moreover, because
+a truly democratic society requires <i>conflict</i>,<i> </i>art should cause <i>unease,
+discomfort, and tension</i> (Bishop, 2004, p. 66).  <i> </i>Like crime, art
+should be transgressive, disruptive, or deviant (but also relationally
+seductive and pleasurable).<a href="#_ftn4" name="_ftnref4" title=""><span
+class=MsoFootnoteReference><span class=MsoFootnoteReference><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif"'>[4]</span></span></span></a> 
+Similarly, since (at least) the emergence of cultural criminology with Katz’s
+(1988) transformative <i>Seductions of Crime</i>, a school of scholars of
+deviance, crime and culture have articulated how crime is interactive
+(relational), improvised, emotional, and related to conflict. Like art, crime
+can be frightening and dangerous, but also commodified, consumed, and
+exploited.<a href="#_ftn5" name="_ftnref5" title=""><span
+class=MsoFootnoteReference><span class=MsoFootnoteReference><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif"'>[5]</span></span></span></a><a
+href="#_ftn6" name="_ftnref6" title=""><span class=MsoFootnoteReference><span
+class=MsoFootnoteReference><span style='font-size:12.0pt;font-family:"Times New Roman","serif"'>[6]</span></span></span></a></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>An important distinction is that art’s dangers are usually
+celebrated while crime’s dangers are condemned; this is because we conflate crime
+that harms with crime that offends, but does not harm.  Sometimes these
+contexts overlap or drift between categories.  ‘Coke rap,’ for example,
+illuminates the shadow space where art and crime live together.  Is the Wu Tang
+Clan a crime syndicate or one of the greatest rap groups in history? Is
+graffiti synonymous with urban blight and vandalism?  Or is it “street art”
+worthy of museum exhibitions and elite private art collections?  The ACA
+investigates these and other responses to boredom.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>At first glance, the Art/Crime Archive might seem to
+represent the epitome of the modern.  By collecting, assessing, organizing and
+preserving, an archive literally and figuratively ‘boxes’ its subject. This
+project, however, transforms the traditional understanding of ‘archiving’ by
+using digital media to make it interactive and dynamic.  In the first place,
+each individual engagement with the Archive can be unique because of the
+dynamic nature of the web platform, which allows individual users to uniquely
+configure their experience in the way material is captured, retrieved,
+assembled and shared.  Secondly, the integration of dynamic media platforms
+‘democratizes’ the archive, offering access to a far greater audience using the
+vernacular of social media. In this way the ACA is designed to remember the
+past while anticipating public opinion on the future. Ideally, the ACA assumes
+the role of a collective memory: it becomes a collective instantiation of a
+community’s opinion about the in-flux limits of cultural transgression (or
+antagonism).</p>
+
+<p class=MsoNormal><i>&nbsp;</i></p>
+
+<p class=MsoNormal><i>Note on Harm</i></p>
+
+<p class=MsoNormal>We are aware that this project could be interpreted as
+insensitive to the harms caused by crime.  We do not wish to minimize the pain,
+suffering, and loss caused in victims by the behaviors of some persons deemed
+criminal.  Rather, an important part of our project is to illuminate the
+relevance of culture to criminal behavior in order to better understand
+processes of criminalization, labeling, and selective law enforcement. 
+Ultimately, we believe that this illuminative process will lead to deeper
+understandings of ‘causes’ of crime, which can in turn inform policy decisions
+aimed at decreasing harm.  We hasten to add that lots of things not called
+crime are more harmful to individuals and communities than almost any particular
+violent crime, or even large scale patterns of violent crime (e.g., the use of
+tobacco, environmental disasters, risky financial schemes).  This archive can
+help study why certain relatively un-harmful acts are deemed criminal while
+some extremely harmful acts are not.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><i>Note on Invisible Resistance</i></p>
+
+<p class=MsoNormal>We know that some artists and criminals do their work
+explicitly to destabilize America’s boring western liberal democratic
+consumerist world of blah.  An old acquaintance the Archive’s was a mid-level seller
+of methamphetamine in the late 1990s in San Francisco.  This person framed his
+work as <i>explicitly</i> subversive, and purposely invisible—not-to-be
+exposed.  This drug dealer wanted his work to be invisible not primarily because
+of risk of arrest but because he wanted to do be deeply <i>underground</i> as a
+way of resisting what he perceived to be America’s boring, conformist,
+consumerist society.  We reflect on this position with some difficulty as we
+develop this project.  We do not want to illuminate or expose cultural
+practices that inherently require invisibility.  At the same time, we find
+these practices profoundly interesting.  For now, we can’t resolve this issue
+and simply propose to keep it in the conversation.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><i>References</i></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.25in'>-<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Bauman, Zygmunt (1992). <i>Intimations of Postmodernity. </i>New York:
+Routledge.</p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.25in'>-<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Bishop, Claire (2004).  “Antagonism and Relational Aesthetics.”  <i>October
+Magazine.</i>  110, Fall 2004, pp. 51-79. </p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.25in'>-<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Ferrell, Jeff (2004). “Boredom, Crime, and Criminology.” <i>Theoretical
+Criminology.</i>  Vol. 8(3): 287–302.</p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.25in'>-<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Katz, Jack (1988). <i>Seductions Of Crime: Moral And Sensual Attractions
+In Doing Evil.</i>  New York: Basic Books.</p>
+
+<p class=MsoNormal> </p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+<div><br clear=all>
+
+<hr align=left size=1 width="33%">
+
+<div id=ftn1>
+
+<p class=MsoFootnoteText><a href="#_ftnref1" name="_ftn1" title=""><span
+class=MsoFootnoteReference><span class=MsoFootnoteReference><span
+style='font-size:10.0pt;font-family:"Times New Roman","serif"'>[1]</span></span></span></a>
+The web platform will be engineered so that only registered users can upload. 
+In order to register, users will be required to electronically agree to terms
+of use to include a provision prohibiting uploads of evidence of prosecutable
+criminal behavior.  Users will also be required provide identifying
+information, including the IP address of the submitting computer.</p>
+
+</div>
+
+<div id=ftn2>
+
+<p class=MsoFootnoteText><a href="#_ftnref2" name="_ftn2" title=""><span
+class=MsoFootnoteReference><span class=MsoFootnoteReference><span
+style='font-size:10.0pt;font-family:"Times New Roman","serif"'>[2]</span></span></span></a>
+The postmodern malaise is probably best summarized in the various works of
+Zygmunt Bauman (e.g., Bauman, 1992).  </p>
+
+</div>
+
+<div id=ftn3>
+
+<p class=MsoFootnoteText><a href="#_ftnref3" name="_ftn3" title=""><span
+class=MsoFootnoteReference><span class=MsoFootnoteReference><span
+style='font-size:10.0pt;font-family:"Times New Roman","serif"'>[3]</span></span></span></a>
+Jeff Ferrell summarizes this view beautifully in “Boredom, Crime, and
+Criminology” (2004).</p>
+
+</div>
+
+<div id=ftn4>
+
+<p class=MsoFootnoteText><a href="#_ftnref4" name="_ftn4" title=""><span
+class=MsoFootnoteReference><span class=MsoFootnoteReference><span
+style='font-size:10.0pt;font-family:"Times New Roman","serif"'>[4]</span></span></span></a>
+Aside from the many examples from the formal world of ‘art,’ see the episode of
+Bravo TV’s <i>Work of Art:  The Next Great Artist</i> in which two female
+artists were celebrated by judges for desecrating another female artist’s mural
+with stickers and graffiti depicting penises. </p>
+
+</div>
+
+<div id=ftn5>
+
+<p class=MsoFootnoteText><a href="#_ftnref5" name="_ftn5" title=""><span
+class=MsoFootnoteReference><span class=MsoFootnoteReference><span
+style='font-size:10.0pt;font-family:"Times New Roman","serif"'>[5]</span></span></span></a>
+Turn on your television and tune into any of the many ‘crimesploitation’ shows
+for examples (e.g., <i>Gangland</i>, <i>Lockup</i>, <i>To Catch a Predator, </i>etc.).</p>
+
+</div>
+
+<div id=ftn6>
+
+<p class=MsoFootnoteText><a href="#_ftnref6" name="_ftn6" title=""><span
+class=MsoFootnoteReference><span class=MsoFootnoteReference><span
+style='font-size:10.0pt;font-family:"Times New Roman","serif"'>[6]</span></span></span></a>
+See this website for cultural criminology for a list of general texts
+discussing this position:  <a
+href="http://blogs.kent.ac.uk/culturalcriminology/">http://blogs.kent.ac.uk/culturalcriminology/</a></p>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

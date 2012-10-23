@@ -8,6 +8,12 @@ from google.appengine.api import users
 from google.appengine.ext import db
 from random import randint
 from re import sub
+from lxml import etree, html
+from lxml.html import tostring
+
+def innerHTML(file, tag):
+  tree = html.parse(file)
+  return ''.join([tostring(child) for child in tree.xpath(tag)[0].iterchildren()])
 
 class Articles(db.Model):
   """Models an individual Archive entry"""
@@ -46,15 +52,15 @@ def get_articles(author=None):
     edit_link = ''
     view_status = ''
     if str(users.get_current_user()) == article.author:
-      edit_link = '<a class="links" href="\edit-article-form?id=%s">edit</a>' % article.key().id()
+      edit_link = '<a class="links" href="/edit-article-form?id=%s">edit</a>' % article.key().id()
       if article.view != 'Publish':
-         view_status = '<a class="view-status" href="\edit-article-form?id=%s">not published</a>' % (article.key().id())
+         view_status = '<a class="view-status" href="/edit-article-form?id=%s">not published</a>' % (article.key().id())
       
     all_articles += '<div class="embed">%s</div>' % article.embed
     all_articles += '<div class="title"> %s ' % article.title
     all_articles += '<span class="author"> by %s </span>' % article.author.split('@',2)[0]
     all_articles += '<span> %s %s </span></div>' % (view_status, edit_link)
-    all_articles += '<pre class="below-video article">%s</pre>' % article.content
+    all_articles += '<div class="below-video article"><pre>%s</pre></div>' % article.content
     all_articles += '<div class="below-video tags">Tags: %s</div>' % article.tags
     
   return all_articles
@@ -85,13 +91,14 @@ class MainPage(webapp2.RequestHandler):
         'center_stage': get_articles(template_data['nickname'])})
 
     if self.request.path == '/about':
+      tree = html.parse('About-the-Art-Crime-Archive.html')
       template_data.update({
         'the_archive': '',
         'my_articles': '',
         'publish_article': '',
         'about': 'class="active"',
-        'center_stage': '<pre class="below-video article">%s</pre>' %
-           'Everything you ever wanted to know about about The Art|Crime Archive.'})
+        'style':  tostring(tree.xpath('//style')[0]),
+        'center_stage': innerHTML('About-the-Art-Crime-Archive.html', 'body')})
 
     path = os.path.join(os.path.dirname(__file__), 'index.html' )
     self.response.headers['X-XSS-Protection'] = '0' #prevents blank embed after post
