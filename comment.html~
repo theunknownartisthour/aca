@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Comment Box</title>
+  <meta name="author" content="Dan Salmonsen">
+  <link rel="stylesheet" type="text/css" media="all" href="static/css/comment.css">
+  <link rel="stylesheet" type="text/css" media="all" href="static/fancybox/jquery.fancybox.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script type="text/javascript" src="static/fancybox/jquery.fancybox.js?v=2.0.6"></script>
+</head>
+
+<body>
+<div id="wrapper1">
+
+	<p><a class="fancy-comment" rel='1' href="#comment-on-1">add comment</a></p>
+</div>
+
+<!-- hidden inline form -->
+<div id="comment-on-1" style="display: none; width: 600px;" >
+	<h2>Comment on: 1st Article</h2>
+
+	<form id="comment-form-1" name="comment-form" action="#" method="post">
+		<label for="user">By: Me</label>
+		<br />
+		<br />
+		<label for="comment-text-1">Enter a comment</label>
+		<textarea id="comment-text-1" name="comment-text-1" class="txtarea"></textarea>
+		
+		<button class="publish" id="publish-1">Publish comment</button>
+	</form>
+</div>
+<div id="2">
+
+	<p><a class="fancy-comment" rel='2' href="#comment-on-12">add comment</a></p>
+</div>
+
+<!-- hidden inline form -->
+<div id="inline2" style="display: none; width: 600px;" >
+	<h2>Comment on: 2nd Article</h2>
+
+	<form id="comment-form-2" name="comment-form" action="#" method="post">
+		<label for="user">By: User 1</label>
+		<br />
+		<br />
+		<label for="comment-text-2">Enter a comment</label>
+		<textarea id="comment-text-2" name="comment-text-2" class="txtarea"></textarea>
+		
+		<button class="publish" id="publish-2">Publish comment</button>
+	</form>
+</div>
+
+<!-- multi-fancybox setup -->
+<script type="text/javascript">
+	$(document).ready(function() {
+		$(".fancy-comment").each(function() {
+      var tthis = this;
+      $(this).fancybox({
+        afterLoad: function () {            
+          var formid = "#comment-form-" + tthis.rel;
+          var textid = "#comment-text-" + tthis.rel;
+          var publishid = "#publish-" + tthis.rel;
+          $(formid).submit(function() { return false; });
+              
+          $(publishid).on("click", function(){
+            var msgval    = $(textid).val();
+            var msglen    = msgval.length;
+            
+            if(msglen < 10) {
+              $(textid).addClass("error");
+            }
+            else if(msglen >= 10){
+              $(textid).removeClass("error");
+            }
+            
+            if(msglen >= 10) {
+              // hide the btn so the user can't click again
+              $(publishid).replaceWith("<em>publishing...</em>");
+              
+              $.ajax({
+                type: 'POST',
+                url: 'sendmessage.php',
+                data: $(formid).serialize(),
+                success: function(data) {
+                  if(data == "true") {
+                    $(formid).fadeOut("fast", function(){
+                      $(this).before("<p><strong>Your comment has been posted.</strong></p>");
+                      setTimeout("$.fancybox.close()", 1000);
+                    });
+                  }
+                }
+              });
+            }
+          });
+        }
+      });
+    });
+
+	});
+</script>
+
+</body>
+</html>

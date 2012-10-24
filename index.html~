@@ -11,7 +11,9 @@
     <link href="../static/css/bootstrap.css" rel="stylesheet">
     <link href="../static/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="../static/css/docs.css" rel="stylesheet">
+    <link href="../static/fancybox/jquery.fancybox.css" rel="stylesheet">
     <link href="../static/css/art-crime-archive.css" rel="stylesheet">
+    <link href="../static/css/comment.css" rel="stylesheet">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -35,21 +37,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    <script type='text/javascript'>
-      function embedPDF(){
-
-        var myPDF = new PDFObject({ 
-
-          url: '/static/About-the-Art-Crime-Archive.pdf',
-          pdfOpenParams: { zoom: '120', scrollbars: '1', toolbar: '1' }
-
-        }).embed('about-pdf-embed'); 
-        // Be sure your document contains an element with the ID 'about-pdf-embed' 
-
-      }
-
-      window.onload = embedPDF; //Feel free to replace window.onload if needed.
-    </script>
+    {{style|safe}}
   </head>
   <body data-spy="scroll" data-target=".bs-docs-sidebar" data-twttr-rendered="true">
     <!-- Fluid grid system
@@ -95,12 +83,12 @@
     ================================================== -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="../static/js/jquery.fitvids.js"></script>
+    <script src="static/fancybox/jquery.fancybox.js?v=2.0.6"></script>
 
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="../static/js/bootstrap.js"></script>
-
 
     <!-- Analytics
     ================================================== -->
@@ -125,5 +113,55 @@
         $(".center-stage").fitVids({ customSelector: "object[src^='/']"});
       });
     </script>
+    
+    <!-- multi-fancybox setup -->
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $(".fancy-comment").each(function() {
+          var tthis = this;
+          $(this).fancybox({
+            afterLoad: function () {            
+              var formid = "#comment-form-" + tthis.rel;
+              var textid = "#comment-text-" + tthis.rel;
+              var publishid = "#publish-" + tthis.rel;
+              $(formid).submit(function() { return false; });
+                  
+              $(publishid).on("click", function(){
+                var msgval    = $(textid).val();
+                var msglen    = msgval.length;
+                
+                if(msglen < 10) {
+                  $(textid).addClass("error");
+                }
+                else if(msglen >= 10){
+                  $(textid).removeClass("error");
+                }
+                
+                if(msglen >= 10) {
+                  // hide the btn so the user can't click again
+                  $(publishid).replaceWith("<em>publishing...</em>");
+                  
+                  $.ajax({
+                    type: 'POST',
+                    url: 'sendmessage.php',
+                    data: $(formid).serialize(),
+                    success: function(data) {
+                      if(data == "true") {
+                        $(formid).fadeOut("fast", function(){
+                          $(this).before("<p><strong>Your comment has been posted.</strong></p>");
+                          setTimeout("$.fancybox.close()", 1000);
+                        });
+                      }
+                    }
+                  });
+                }
+              });
+            }
+          });
+        });
+
+      });
+    </script>
+
   </body>
 </html>
