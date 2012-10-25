@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'/>
+		<title>Textarea Autosize Demo</title>
+		<style>
+			textarea { 
+			}
+
+			.comment-text {
+				border:1px solid #ccc;
+        width: 600px;
+				vertical-align: top; 
+				transition: height 0.2s;
+				-webkit-transition: height 0.2s; 
+				-moz-transition: height 0.2s; 
+			}
+		</style>
+		<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
+		<script src='jquery.autosize.js'></script>
+		<script src='jquery.hint.js'></script>
+		<script>
+			$(function(){
+				$('.comment-text').autosize({append: "\n"});
+			});
+      $(function(){ 
+			    // find all the input elements with title attributes
+				$('textarea[title!=""]').hint();
+			});
+      $(document).ready(function () {
+        $('.comment-text').focus(function() {
+          var form = $(this).parent().find('button')
+          if (!$(this).parent().find('button').length) {
+            $($(this).parent().find('.comment-form').append('<div><button class="publish" id="publish-it">Publish Comment</button></div>');
+          }
+        });
+        $('.comment-text').blur(function() {
+          var form = $(this).parent()
+          if ($.trim($(".comment-text", form).val()) == "add your comment...") {
+              // user did not add comment
+            $('.comment-form div', form).remove();
+          }
+        });
+      });
+		</script>
+	</head>
+	<body> 
+    <form class="comment-form" name="comment-form-1" action="#" method="post">
+      <textarea class="comment-text" name='comment-text' title="add your comment..."></textarea>
+    </form> 
+    <form class="comment-form" name="comment-form-2" action="#" method="post">
+      <textarea class="comment-text" name='comment-text' title="add your comment..."></textarea>
+    </form> 
+	</body>
+</html>

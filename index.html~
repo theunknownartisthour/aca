@@ -78,7 +78,18 @@
         <div class="center-stage">{{center_stage|safe}}</div>
       </div>
     </div>
-
+    <!-- hidden comment form -->
+    <div id="fancy-form" style="display: none; width: 600px;" >
+      <form id="comment-form" name="comment-form" action="#" method="post">
+        <label for="user">By: User</label>
+        <br />
+        <br />
+        <label for="comment-text">Enter a comment</label>
+        <textarea id="comment-text" name="comment-text" class="txtarea"></textarea>
+        
+        <button class="publish" id="publish-it">Publish comment</button>
+      </form>
+    </div>
    <!-- javascript for Art-Crime-Archive
     ================================================== -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>

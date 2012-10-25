@@ -51,15 +51,9 @@ def get_articles(author=None):
   for article in articles:
     edit_link = ''
     view_status = ''
-    comment_link = '<a class="fancy-comment" href="#comment-on-%s">add comment</a>' % article.key().id()
-    template_data = {
-            'article_id': '"comment-on-%s"' % article.key().id(),
-            'comment_form': '"comment-form-%s"' % article.key().id(),
-            'comment_text': '"comment-text-%s"' % article.key().id(),
-            'publish_id': '"publish-id-%s"' % article.key().id(),
-            'title': article.title,
-            'user': users.get_current_user()
-            }
+    comment_link = ('<a class="fancy-comment" href="#fancy-form" data-article-id="%s" '
+                    'data-user="%s" data-title="%s">add comment</a>' 
+                    % (article.key().id(), article.title, users.get_current_user()))
     if str(users.get_current_user()) == article.author:
       edit_link = '<a class="links" href="/edit-article-form?id=%s">edit</a>' % article.key().id()
       if article.view != 'Publish':

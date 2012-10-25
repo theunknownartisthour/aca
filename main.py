@@ -51,15 +51,9 @@ def get_articles(author=None):
   for article in articles:
     edit_link = ''
     view_status = ''
-    comment_link = '<a class="fancy-comment" href="#comment-on-%s">add comment</a>' % article.key().id()
-    template_data = {
-            'article_id': '"comment-on-%s"' % article.key().id(),
-            'comment_form': '"comment-form-%s"' % article.key().id(),
-            'comment_text': '"comment-text-%s"' % article.key().id(),
-            'publish_id': '"publish-id-%s"' % article.key().id(),
-            'title': article.title,
-            'user': users.get_current_user()
-            }
+    comment_link = ('<a class="fancy-comment" href="#fancy-form" data-article-id="%s" '
+                    'data-user="%s" data-title="%s">add comment</a>' 
+                    % (article.key().id(), users.get_current_user(), article.title))
     if str(users.get_current_user()) == article.author:
       edit_link = '<a class="links" href="/edit-article-form?id=%s">edit</a>' % article.key().id()
       if article.view != 'Publish':
@@ -72,9 +66,6 @@ def get_articles(author=None):
     all_articles += '<div class="below-video article"><pre>%s</pre></div>' % article.content
     all_articles += '<div class="below-video tags">Tags: %s</div>' % article.tags
     all_articles += '<div class="below-video tags">Comments: %s</div>' % comment_link
-    path = os.path.join(os.path.dirname(__file__), 'comment-form.html' )
-    all_articles += template.render(path, template_data)
-    
   return all_articles
 
 class MainPage(webapp2.RequestHandler):
