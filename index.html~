@@ -124,55 +124,31 @@
         $(".center-stage").fitVids({ customSelector: "object[src^='/']"});
       });
     </script>
-    
-    <!-- multi-fancybox setup -->
-    <script type="text/javascript">
-      $(document).ready(function() {
-        $(".fancy-comment").each(function() {
-          var tthis = this;
-          $(this).fancybox({
-            afterLoad: function () {            
-              var formid = "#comment-form-" + tthis.rel;
-              var textid = "#comment-text-" + tthis.rel;
-              var publishid = "#publish-" + tthis.rel;
-              $(formid).submit(function() { return false; });
-                  
-              $(publishid).on("click", function(){
-                var msgval    = $(textid).val();
-                var msglen    = msgval.length;
-                
-                if(msglen < 10) {
-                  $(textid).addClass("error");
-                }
-                else if(msglen >= 10){
-                  $(textid).removeClass("error");
-                }
-                
-                if(msglen >= 10) {
-                  // hide the btn so the user can't click again
-                  $(publishid).replaceWith("<em>publishing...</em>");
-                  
-                  $.ajax({
-                    type: 'POST',
-                    url: 'sendmessage.php',
-                    data: $(formid).serialize(),
-                    success: function(data) {
-                      if(data == "true") {
-                        $(formid).fadeOut("fast", function(){
-                          $(this).before("<p><strong>Your comment has been posted.</strong></p>");
-                          setTimeout("$.fancybox.close()", 1000);
-                        });
-                      }
-                    }
-                  });
-                }
-              });
-            }
-          });
+    <!-- autosize and autobuttons for comment boxes -->
+		<script>
+			$(function(){
+				$('.comment-text').autosize({append: "\n"});
+			});
+      $(function(){ 
+			  // Place hints in all comment-text input elements with empty title attributes
+				$('.comment-text[title!=""]').hint();
+			});
+      $(document).ready(function () {
+			  // Add a publish comment button when comment text is clicked.
+        $('.comment-text').focus(function() {
+          var form = $(this).parent()
+          if (!form.find('button').length) {
+            $(form).append('<div><button class="publish" id="publish-it">Publish Comment</button></div>');
+          }
         });
-
+        $('.comment-text').blur(function() {
+          var form = $(this).parent()
+          if ($.trim($(this).val()) == "add your comment...") {
+              // user did not add comment, remove the div with publish comment button
+            $(form.find('div')).remove();
+          }
+        });
       });
-    </script>
-
+		</script>
   </body>
 </html>

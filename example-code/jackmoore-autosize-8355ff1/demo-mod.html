@@ -19,15 +19,17 @@
 		<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
 		<script src='jquery.autosize.js'></script>
 		<script src='jquery.hint.js'></script>
+    <!-- autosize and autobuttons for comment boxes -->
 		<script>
 			$(function(){
 				$('.comment-text').autosize({append: "\n"});
 			});
       $(function(){ 
-			    // find all the input elements with title attributes
-				$('textarea[title!=""]').hint();
+			  // Place hints in all comment-text input elements with empty title attributes
+				$('.comment-text[title!=""]').hint();
 			});
       $(document).ready(function () {
+			  // Add a publish comment button when comment text is clicked.
         $('.comment-text').focus(function() {
           var form = $(this).parent()
           if (!form.find('button').length) {
@@ -37,7 +39,7 @@
         $('.comment-text').blur(function() {
           var form = $(this).parent()
           if ($.trim($(this).val()) == "add your comment...") {
-              // user did not add comment
+              // user did not add comment, remove the div with publish comment button
             $(form.find('div')).remove();
           }
         });
@@ -45,13 +47,13 @@
 		</script>
 	</head>
 	<body> 
-    <form class="comment-form" name="comment-form-1" action="#" method="post">
+    <form class="comment-form" name="comment-form-1" action="/comment-on?id=1" method="post">
       <textarea class="comment-text" name='comment-text' title="add your comment..."></textarea>
     </form> 
-    <form class="comment-form" name="comment-form-2" action="#" method="post">
+    <form class="comment-form" name="comment-form-2" action="/comment-on?id=2" method="post">
       <textarea class="comment-text" name='comment-text' title="add your comment..."></textarea>
     </form> 
-    <form class="comment-form" name="comment-form-3" action="#" method="post">
+    <form class="comment-form" name="comment-form-3" action="/comment-on?id=3" method="post">
       <textarea class="comment-text" name='comment-text' title="add your comment..."></textarea>
     </form> 
 	</body>

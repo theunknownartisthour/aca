@@ -51,9 +51,9 @@ def get_articles(author=None):
   for article in articles:
     edit_link = ''
     view_status = ''
-    comment_link = ('<a class="fancy-comment" href="#fancy-form" data-article-id="%s" '
-                    'data-user="%s" data-title="%s">add comment</a>' 
-                    % (article.key().id(), article.title, users.get_current_user()))
+    comment_box = ('<form class="comment-form" name="comment-form" action="/comment-on?id=%s" method="post">'
+                    '<textarea class="comment-text" name="comment-text" title="add your comment..."></textarea>'
+                    '</form>' % article.key().id())
     if str(users.get_current_user()) == article.author:
       edit_link = '<a class="links" href="/edit-article-form?id=%s">edit</a>' % article.key().id()
       if article.view != 'Publish':
@@ -65,10 +65,7 @@ def get_articles(author=None):
     all_articles += '<span> %s %s </span></div>' % (view_status, edit_link)
     all_articles += '<div class="below-video article"><pre>%s</pre></div>' % article.content
     all_articles += '<div class="below-video tags">Tags: %s</div>' % article.tags
-    all_articles += '<div class="below-video tags">Comments: %s</div>' % comment_link
-    path = os.path.join(os.path.dirname(__file__), 'comment-form.html' )
-    all_articles += template.render(path, template_data)
-    
+    all_articles += '<div class="below-video tags">Comments: %s</div>' % comment_box
   return all_articles
 
 class MainPage(webapp2.RequestHandler):
@@ -155,6 +152,16 @@ class PublishArticle(webapp2.RequestHandler):
       return self.redirect('/my-articles')
     return self.redirect('/')
 
+class Comment(webapp2.RequestHandler):
+  def post(self):
+    if self.request.get('id') is not '':
+      article_id = int(self.request.get('id'))
+      article = Articles(parent=archive_key()).get_by_id(article_id, parent=archive_key())
+    else:
+      article = Articles(parent=archive_key())
+
+#    article.put()
+    return self.redirect('/?comment=%s&id=%s' % (self.request.get('comment-text'), )
 
 class EditArticleForm(webapp2.RequestHandler):
   def get(self):
@@ -186,5 +193,6 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/about', MainPage),                               
                                ('/publish-article-form', PublishArticleForm),
                                ('/edit-article-form', EditArticleForm),
-                               ('/publish-it', PublishArticle)],
+                               ('/publish-it', PublishArticle),
+                               ('/comment-on', Comment)],
                                 debug=True)
