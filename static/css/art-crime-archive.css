@@ -117,9 +117,29 @@ div[class*="side-bar"]{
   font-size: 12px;
 }
 .comments{
+  margin-bottom: 7px;
+  padding: 5px;
   color: #333;
   font-family: Trebuchet MS, Helvetica, sans-serif;
-  font-size: 12px;
+  font-size: 14px;
+  border: 1px solid #888;
+}
+tr.comment-display  {
+}
+td.comment-info  {
+  min-width: 20px;
+}
+a.comment-user {
+  font-weight: bold;
+}
+td.comment-display  {
+  padding: 5px;
+  border-top: 1px dashed #aaa;
+  color: #555;
+}
+span.comment-relativetime {
+  font-size: 11px;
+  color: #aaa;
 }
 .comment-text {
   border:1px solid #888;

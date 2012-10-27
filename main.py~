@@ -6,10 +6,12 @@ from google.appengine.ext.webapp import template
 from google.appengine.api import urlfetch
 from google.appengine.api import users
 from google.appengine.ext import db
+from datetime import datetime, timedelta
 from random import randint
 from re import sub
 from lxml import etree, html
-from lxml.html import tostring
+from lxml.html import tostring, fragment_fromstring
+from pickle import dumps, loads
 
 def innerHTML(file, tag):
   tree = html.parse(file)
@@ -21,14 +23,42 @@ class Articles(db.Model):
   embed = db.TextProperty()
   title = db.StringProperty()
   content = db.TextProperty()
-  tags = db.TextProperty(str)
+  tags = db.TextProperty()
+  comments = db.ListProperty(db.Text)
   view = db.StringProperty() #Publish, Preview or Retract
   date = db.DateTimeProperty(auto_now_add=True)
 
 def archive_key(Archive_name=None):
   """Constructs a Datastore key for an Archive entity."""
   return db.Key.from_path('Archive', Archive_name or 'test_archive')
-
+  
+def format_comments(comments=None, article_id=None):
+  template_data = {
+          'user_activity': '',
+          'article_id': article_id,}
+  comment_box = ('<form class="comment-form" name="comment-form" action="/comment-on?id=%s" method="post">'
+                  '<textarea class="comment-text" name="comment-text" title="add your comment..."></textarea>'
+                  '</form>' % article_id)
+#add delete comment or report abuse.
+  tree = 
+  path = os.path.join(os.path.dirname(__file__), 'comment-table-template.html' )
+  all_comments = '<div class="below-video tags"><table><tbody>'
+  comment_id = 0
+  for comment in comments:
+    template_data.update({
+        'comment_id': comment_id,
+        'comment_display': loads(comment)[0],
+        'nickname': loads(comment)[1],
+        'comment_date': loads(comment)[2],
+        'time_now': datetime.now()
+        })
+    comment_id += 1
+    tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
+    all_comments += tostring(tree.xpath('//tr')[0])
+  all_comments += '</div></tbody>'
+  all_comments += tostring(tree.xpath('//tfoot')[0]) + '</table>'
+  return all_comments
+  
 def get_articles(author=None):
   """Retrieves articles from Archive entity and composes HTML."""
   if author is None:
@@ -51,9 +81,6 @@ def get_articles(author=None):
   for article in articles:
     edit_link = ''
     view_status = ''
-    comment_box = ('<form class="comment-form" name="comment-form" action="/comment-on?id=%s" method="post">'
-                    '<textarea class="comment-text" name="comment-text" title="add your comment..."></textarea>'
-                    '</form>' % article.key().id())
     if str(users.get_current_user()) == article.author:
       edit_link = '<a class="links" href="/edit-article-form?id=%s">edit</a>' % article.key().id()
       if article.view != 'Publish':
@@ -65,9 +92,14 @@ def get_articles(author=None):
     all_articles += '<span> %s %s </span></div>' % (view_status, edit_link)
     all_articles += '<div class="below-video article"><pre>%s</pre></div>' % article.content
     all_articles += '<div class="below-video tags">Tags: %s</div>' % article.tags
-    all_articles += '<div class="below-video tags">Comments: %s</div>' % comment_box
+    all_articles += format_comments(article.comments, article.key().id())
   return all_articles
 
+class TestPage(webapp2.RequestHandler):
+  def get(self):
+    pass
+# test page stub
+  
 class MainPage(webapp2.RequestHandler):
   def get(self):
     template_data = {
@@ -160,8 +192,10 @@ class Comment(webapp2.RequestHandler):
     else:
       article = Articles(parent=archive_key())
 
-#    article.put()
-    return self.redirect('/?comment=%s&id=%s' % (self.request.get('comment-text'), )
+    pickled = db.Text(dumps([self.request.get('comment-text'), users.get_current_user(), datetime.now()]))
+    article.comments.append(pickled)
+    article.put()
+    return self.redirect('/')
 
 class EditArticleForm(webapp2.RequestHandler):
   def get(self):
@@ -194,5 +228,6 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/publish-article-form', PublishArticleForm),
                                ('/edit-article-form', EditArticleForm),
                                ('/publish-it', PublishArticle),
-                               ('/comment-on', Comment)],
+                               ('/comment-on', Comment),
+                               ('/test', TestPage)],
                                 debug=True)
