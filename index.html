@@ -147,7 +147,8 @@
         $('.comment-form').submit(function() {
           event.preventDefault(); 
           var id = $(this).attr('article');
-          var text = $(this).find('textarea').val();
+          var $textarea = $(this).find('textarea');
+          var text = $textarea.val();
           $.ajax ({
               url: "/ArchiveService.post_comment",
               type: "POST",
@@ -171,6 +172,8 @@
                   $($new_comment).find('a[class="comment-user"]').attr(data.user_url);
                   $($new_comment).find('a[class="comment-user"]').text(data.nickname);
                   $($new_comment).attr('class', 'comment');
+                  // reset comment form
+                  $textarea.val('add your comment...');
               }
           });
           return false;
