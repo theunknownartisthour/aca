@@ -5,12 +5,19 @@ api_version: 1
 threadsafe: yes
 
 handlers:
+- url: /admin/.*
+  script: google.appengine.ext.admin.application
+  login: admin
+
 - url: /favicon\.ico
   static_files: favicon.ico
   upload: favicon\.ico
 
 - url: /static
   static_dir: static
+
+- url: /ArchiveService.*
+  script: services.app
   
 - url: .*
   script: main.app
@@ -19,4 +26,4 @@ libraries:
 - name: webapp2
   version: "2.5.1"
 - name: lxml
-  version: "2.3.0"
+  version: "2.3"

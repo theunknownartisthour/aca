@@ -88,16 +88,13 @@
         <button class="publish" id="publish-it">Publish comment</button>
       </form>
     </div>
-   <!-- javascript for Art-Crime-Archive
-    ================================================== -->
+    <!-- ================================================== -->
+    <!-- javascript placed at the end of the document so the pages load faster -->
+    <script src="//ajax.googleapis.com/ajax/libs/prototype/1.7.1.0/prototype.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="../static/js/jquery.fitvids.js"></script>
 		<script src='../static/js/jquery.autosize.js'></script>
 		<script src='../static/js/jquery.hint.js'></script>
-
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
     <script src="../static/js/bootstrap.js"></script>
 
     <!-- Analytics
@@ -146,6 +143,37 @@
               // user did not add comment, remove the div with publish comment button
             $(form.find('div')).remove();
           }
+        });
+        $('.comment-form').submit(function() {
+          event.preventDefault(); 
+          var id = $(this).attr('article');
+          var text = $(this).find('textarea').val();
+          $.ajax ({
+              url: "/ArchiveService.post_comment",
+              type: "POST",
+              data: JSON.stringify({"article_id": id, "comment_text": text}),
+              dataType: "json",
+              contentType: "application/json; charset=utf-8",
+              success: function(data) {
+                  console.log('  id = ', data.comment_id,
+                              '  url = ', data.user_url,
+                              '  user_activity = ', data.user_activity,
+                              '  nickname = ', data.nickname
+                              );
+                  // create next hidden comment row
+                  var $new_comment = '#comment-' + id + '-' + data.comment_id
+                  var $clone = $($new_comment).clone();
+                  $clone.attr('id', 'comment-' + id + '-' + (data.comment_id + 1));
+                  console.log('appending ', $clone.attr('id'));
+                  $('#comment-table-' + id).append($clone);
+                  // fill in and unhide new comment row
+                  $($new_comment).find('span[class="comment-display"]').text(text);
+                  $($new_comment).find('a[class="comment-user"]').attr(data.user_url);
+                  $($new_comment).find('a[class="comment-user"]').text(data.nickname);
+                  $($new_comment).attr('class', 'comment');
+              }
+          });
+          return false;
         });
       });
 		</script>
