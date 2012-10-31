@@ -10,6 +10,7 @@ import main
 class Comment(messages.Message):
     article_id = messages.IntegerField(1, required=True)
     comment_text = messages.StringField(2, required=True)
+    comment_id = messages.IntegerField(3)
 
 class Comments(messages.Message):
     comments = messages.MessageField(Comment, 1, repeated=True)
@@ -37,6 +38,15 @@ class ArchiveService(remote.Service):
                           user_url = 'todo',
                           user_activity = 'todo',
                           nickname = str(nickname))
+        
+    @remote.method(Comment, message_types.VoidMessage)
+    def edit_comment(self, request):
+      article = main.Articles(parent=main.archive_key()).get_by_id(request.article_id, parent=main.archive_key())
+      nickname = main.users.get_current_user()
+      pickled = main.db.Text(dumps([request.comment_text, nickname, datetime.now()]))
+      article.comments[request.comment_id] = pickled
+      article.put()
+      return  message_types.VoidMessage()
         
     @remote.method(GetCommentsRequest, Comments)
     def get_comments(self, request):

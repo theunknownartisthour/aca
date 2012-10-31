@@ -128,8 +128,11 @@ tr.comment-display  {
 }
 td.comment-info  {
   min-width: 20px;
-  
-}td.comment-display  {
+}
+a.comment-user {
+  font-weight: bold;
+}
+td.comment-display  {
   padding: 5px;
   border-top: 1px dashed #aaa;
   color: #555;
@@ -154,9 +157,11 @@ input.error:focus, textarea.error:focus { border-color: #973d3d; color: #a35959;
 
 .publish { 
 color: #dee5f0;
+min-width: 160px;
+margin-left: 4px;
 display: block;
 cursor: pointer;
-padding: 3px 7px;
+padding: 3px 8px;
 font-size: 1em;
 border: solid 1px #224983;
 border-radius: 5px;

@@ -114,10 +114,10 @@ class MainPage(webapp2.RequestHandler):
             }
     user = users.get_current_user()
     if user:
-      template_data.update({'greeting': ("<div class=\"signed-in\"> %s <a class=\"sign-out\" href=\"%s\">(sign out)</a></div>" % (user.nickname(), users.create_logout_url("/")))})
+      template_data.update({'greeting': ('<div class="signed-in" nickname="%s"> %s <a class="sign-out" href="%s">(sign out)</a></div>' % (user.nickname(), user.nickname(), users.create_logout_url("/")))})
       template_data.update({'nickname': user.nickname()})
     else:
-      template_data.update({'greeting': ("<a class=\"sign-in\" href=\"%s\">Sign in or register</a>" % users.create_login_url("/"))})
+      template_data.update({'greeting': ('<a id="not-signed-in" class="sign-in" href="%s">Sign in or register</a>' % users.create_login_url("/"))})
       template_data.update({'nickname': ''})
 
     if self.request.path == '/my-articles':
@@ -152,7 +152,7 @@ class PublishArticleForm(webapp2.RequestHandler):
               'user': user.nickname(),
               }
     else:
-      return self.redirect(users.create_login_url("/"))
+      return self.redirect(users.create_login_url("/publish-article-form"))
       
     self.response.out.write('<html><body><p>Article will be published by: %s</p>' % greeting)
     self.response.out.write("""

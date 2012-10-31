@@ -130,11 +130,16 @@
 				$('.comment-text[title!=""]').hint();
 			});
       $(document).ready(function () {
-			  // Add a publish comment button when comment text is clicked.
+			  // If signed in, append a publish comment button when comment text is clicked.
         $('.comment-text').focus(function() {
-          var form = $(this).parent()
+          var form = $(this).parent();
           if (!form.find('button').length) {
-            $(form).append('<div><button class="publish" id="publish-it">Publish Comment</button></div>');
+            if ($('#not-signed-in').length) {
+              window.location = $('#not-signed-in').attr('href') + '%23' + $(this).attr('id');
+            }
+            else {
+              $(form).append('<div><button class="publish" id="publish-it">Publish Comment</button></div>');
+            }
           }
         });
         $('.comment-text').blur(function() {
@@ -144,11 +149,43 @@
             $(form.find('div')).remove();
           }
         });
+        // edit comment
+        $('tbody').on('mouseenter', '.comment', function(){
+            // check if comment is by signed in user
+            var user = $('.signed-in').attr('nickname');
+            var comment_author = $(this).attr('author');
+            if (user == comment_author){
+              var $comment_edit = $('.comment-add-' + $(this).attr('article')).clone();
+              $comment_edit.attr('class', 'comment-edit');
+              $comment_edit.insertAfter($(this));
+              $comment_edit.find('div').remove();
+              previous_comment = $(this).find('span[class="comment-display"]').text();
+              $comment_edit.find('.comment-text').val(previous_comment);
+              $comment_edit.find('.comment-text').attr('title', previous_comment);
+              $comment_edit.find('.comment-form').attr('class', 'comment-edit-form');
+              $(this).attr('class', 'comment hidden');
+            }
+        });
+        $('tbody').on('click', '.comment-edit', function(){
+            // user has clicked into edit commnet
+            var form = $(this).parent();
+            if (!form.find('button').length) {
+                $(this).find('.comment-form').append('<div><table><tbody><tr><td><button class="publish" id="update-it">Update Comment</button></td><td><button class="publish" id="cancel-it">Cancel</button></td></tr></tbody></table></div>');
+             }
+        });
+        $('tbody').on('mouseleave', '.comment-edit', function(){
+            if ($(this).find('textarea').attr('title') == $(this).find('textarea').val()) {
+              console.log('clicked on comment-edit');
+              console.log($(this).prev());
+              $(this).prev().attr('class', 'comment');
+              $(this).remove();
+            }
+        });
         $('.comment-form').submit(function() {
           event.preventDefault(); 
           var id = $(this).attr('article');
           var $textarea = $(this).find('textarea');
-          var text = $textarea.text
+          var text = $textarea.val();
           $.ajax ({
               url: "/ArchiveService.post_comment",
               type: "POST",
@@ -165,17 +202,88 @@
                   var $new_comment = '#comment-' + id + '-' + data.comment_id
                   var $clone = $($new_comment).clone();
                   $clone.attr('id', 'comment-' + id + '-' + (data.comment_id + 1));
-                  console.log('appending ', $clone.attr('id'));
                   $('#comment-table-' + id).append($clone);
                   // fill in and unhide new comment row
                   $($new_comment).find('span[class="comment-display"]').text(text);
                   $($new_comment).find('a[class="comment-user"]').attr(data.user_url);
                   $($new_comment).find('a[class="comment-user"]').text(data.nickname);
                   $($new_comment).attr('class', 'comment');
-                  // reset comment form
-                  $textarea.text = ;
               }
           });
+          // reset comment form
+          $textarea.val('');
+          $('.comment-text[title!=""]').hint();
+           $($(this).find('div')).remove();
+          return false;
+        });
+        $('.comment-form').submit(function() {
+          event.preventDefault(); 
+          var id = $(this).attr('article');
+          var $textarea = $(this).find('textarea');
+          var text = $textarea.val();
+          $.ajax ({
+              url: "/ArchiveService.post_comment",
+              type: "POST",
+              data: JSON.stringify({"article_id": id, "comment_text": text}),
+              dataType: "json",
+              contentType: "application/json; charset=utf-8",
+              success: function(data) {
+                  console.log('  id = ', data.comment_id,
+                              '  url = ', data.user_url,
+                              '  user_activity = ', data.user_activity,
+                              '  nickname = ', data.nickname
+                              );
+                  // create next hidden comment row
+                  var $new_comment = '#comment-' + id + '-' + data.comment_id
+                  var $clone = $($new_comment).clone();
+                  $clone.attr('id', 'comment-' + id + '-' + (data.comment_id + 1));
+                  $('#comment-table-' + id).append($clone);
+                  // fill in and unhide new comment row
+                  $($new_comment).find('span[class="comment-display"]').text(text);
+                  $($new_comment).find('a[class="comment-user"]').attr(data.user_url);
+                  $($new_comment).find('a[class="comment-user"]').text(data.nickname);
+                  $($new_comment).attr('class', 'comment');
+              }
+          });
+          // reset comment form
+          $textarea.val('');
+          $('.comment-text[title!=""]').hint();
+           $($(this).find('div')).remove();
+          return false;
+        });
+        $('.comment-edit-form').submit(function() {
+          event.preventDefault(); 
+          var id = $(this).attr('article');
+          var $textarea = $(this).find('textarea');
+          var text = $textarea.val();
+          $.ajax ({
+              url: "/ArchiveService.edit_comment",
+              type: "POST",
+              data: JSON.stringify({"article_id": id, "comment_text": text}),
+              dataType: "json",
+              contentType: "application/json; charset=utf-8",
+              success: function(data) {
+                  console.log('  id = ', data.comment_id,
+                              '  url = ', data.user_url,
+                              '  user_activity = ', data.user_activity,
+                              '  nickname = ', data.nickname
+                              );
+                  // create next hidden comment row
+                  var $new_comment = '#comment-' + id + '-' + data.comment_id
+                  var $clone = $($new_comment).clone();
+                  $clone.attr('id', 'comment-' + id + '-' + (data.comment_id + 1));
+                  $('#comment-table-' + id).append($clone);
+                  // fill in and unhide new comment row
+                  $($new_comment).find('span[class="comment-display"]').text(text);
+                  $($new_comment).find('a[class="comment-user"]').attr(data.user_url);
+                  $($new_comment).find('a[class="comment-user"]').text(data.nickname);
+                  $($new_comment).attr('class', 'comment');
+              }
+          });
+          // reset comment form
+          $textarea.val('');
+          $('.comment-text[title!=""]').hint();
+           $($(this).find('div')).remove();
           return false;
         });
       });

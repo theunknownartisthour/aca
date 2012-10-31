@@ -7,9 +7,14 @@ curl -H    'content-type:application/json'    -d '{"on_or_before": 1351398025}' 
 
 curl -H 'content-type:application/json' -d '{"article_id": 24, "comment_text": "This comment was posted via the service"}' http://localhost:8087/ArchiveService.post_comment
 
+$ curl -H 'content-type:application/json' -d '{"article_id": 24, "comment_text"
+: "This comment was edited via the service", "comment_id": 15}' http://localhos
+t:8087/ArchiveService.edit_comment
+
+
           $.post("/ArchiveService.post_comment", {"article_id": id, "comment_text": text}, function(data) {
                 alert("response: " + data);}, "json");
-
+$('#comment-table-' + id).append(
 , $(this).find('textarea').text()
 
 import calendar

@@ -55,7 +55,7 @@ def format_comments(comments=None, article_id=None):
     comment_id += 1
     tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
     all_comments += tostring(tree.xpath('//tr')[0])
-  
+  #place an empty hidden comment last
   template_data.update({'comment_id': str(article_id) + '-' + str(comment_id)})
   tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
   all_comments += tostring(tree.xpath('//tr')[1])
@@ -114,10 +114,10 @@ class MainPage(webapp2.RequestHandler):
             }
     user = users.get_current_user()
     if user:
-      template_data.update({'greeting': ("<div class=\"signed-in\"> %s <a class=\"sign-out\" href=\"%s\">(sign out)</a></div>" % (user.nickname(), users.create_logout_url("/")))})
+      template_data.update({'greeting': ('<div class="signed-in"> %s <a class="sign-out" href="%s">(sign out)</a></div>' % (user.nickname(), users.create_logout_url("/")))})
       template_data.update({'nickname': user.nickname()})
     else:
-      template_data.update({'greeting': ("<a class=\"sign-in\" href=\"%s\">Sign in or register</a>" % users.create_login_url("/"))})
+      template_data.update({'greeting': ('<a id="not-signed-in" class="sign-in" href="%s">Sign in or register</a>' % users.create_login_url("/"))})
       template_data.update({'nickname': ''})
 
     if self.request.path == '/my-articles':

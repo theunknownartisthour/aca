@@ -157,9 +157,11 @@ input.error:focus, textarea.error:focus { border-color: #973d3d; color: #a35959;
 
 .publish { 
 color: #dee5f0;
+min-width: 130px;
+margin-left: 5px;
 display: block;
 cursor: pointer;
-padding: 3px 7px;
+padding: 3px 8px;
 font-size: 1em;
 border: solid 1px #224983;
 border-radius: 5px;
