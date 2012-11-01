@@ -46,7 +46,7 @@ def format_comments(comments=None, article_id=None):
   comment_id = 0
   for comment in comments:
     template_data.update({
-        'comment_id': str(article_id) + '-' + str(comment_id),
+        'comment_id': str(comment_id),
         'comment_display': loads(comment)[0],
         'nickname': loads(comment)[1],
         'comment_date': loads(comment)[2],
@@ -56,7 +56,7 @@ def format_comments(comments=None, article_id=None):
     tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
     all_comments += tostring(tree.xpath('//tr')[0])
   #place an empty hidden comment last
-  template_data.update({'comment_id': str(article_id) + '-' + str(comment_id)})
+  template_data.update({'comment_id': str(comment_id)})
   tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
   all_comments += tostring(tree.xpath('//tr')[1])
   all_comments += '</tbody>'

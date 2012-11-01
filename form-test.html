@@ -1,0 +1,16 @@
+<body>
+<form action="none" method="post">
+  <textarea></textarea>
+  <input type="submit" value="test" />
+</form>
+<div> header test </div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>
+        $('form').submit(function() {
+            return false;
+        });
+        $('body').on('click', 'div', function(e){
+            alert('header clicked');
+        });
+</script>
+</body>

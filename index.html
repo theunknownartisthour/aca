@@ -73,20 +73,9 @@
     </div>
     <div class="row-fluid">
       <div class="span9">
-        <div class="center-stage">{{center_stage|safe}}</div>
+        <div class="center-stage">{{center_stage|safe}}
+        </div>
       </div>
-    </div>
-    <!-- hidden comment form -->
-    <div id="fancy-form" style="display: none; width: 600px;" >
-      <form id="comment-form" name="comment-form" action="#" method="post">
-        <label for="user">By: User</label>
-        <br />
-        <br />
-        <label for="comment-text">Enter a comment</label>
-        <textarea id="comment-text" name="comment-text" class="txtarea"></textarea>
-        
-        <button class="publish" id="publish-it">Publish comment</button>
-      </form>
     </div>
     <!-- ================================================== -->
     <!-- javascript placed at the end of the document so the pages load faster -->
@@ -111,17 +100,7 @@
         var s = document.getElementsByTagName('script')[0];
         s.parentNode.insertBefore(t, s);
       })();
-    </script>
-
-    <!-- Fits videos in fluid grid -->
-    <script>
-      $(document).ready(function(){
-        // Target your .container, .wrapper, .post, etc.
-        $(".center-stage").fitVids({ customSelector: "object[src^='/']"});
-      });
-    </script>
     <!-- autosize and autobuttons for comment boxes -->
-		<script>
 			$(function(){
 				$('.comment-text').autosize({append: "\n"});
 			});
@@ -130,6 +109,9 @@
 				$('.comment-text[title!=""]').hint();
 			});
       $(document).ready(function () {
+        <!-- Fits videos in fluid grid -->
+        // Target your .container, .wrapper, .post, etc.
+        $(".center-stage").fitVids({ customSelector: "object[src^='/']"});
 			  // If signed in, append a publish comment button when comment text is clicked.
         $('.comment-text').focus(function() {
           var form = $(this).parent();
@@ -150,7 +132,14 @@
           }
         });
         // edit comment
-        $('tbody').on('mouseenter', '.comment', function(){
+        $('body').on('mouseenter', '.comment', function(){
+            var user = $('.signed-in').attr('nickname');
+            var comment_author = $(this).attr('author');
+            if (user == comment_author){
+              $(this).css( 'cursor', 'pointer' );
+            }
+        });
+        $('body').on('click', '.comment', function(){
             // check if comment is by signed in user
             var user = $('.signed-in').attr('nickname');
             var comment_author = $(this).attr('author');
@@ -162,52 +151,48 @@
               previous_comment = $(this).find('span[class="comment-display"]').text();
               $comment_edit.find('.comment-text').val(previous_comment);
               $comment_edit.find('.comment-text').attr('title', previous_comment);
+              $comment_edit.find('.comment-form').attr('comment-id', $(this).attr('comment-id'));
+              $comment_edit.find('.comment-form').attr('name', 'comment-edit-form');
               $comment_edit.find('.comment-form').attr('class', 'comment-edit-form');
               $(this).attr('class', 'comment hidden');
             }
         });
-        $('tbody').on('click', '.comment-edit', function(){
+        $('body').on('click', '.comment-edit', function(){
             // user has clicked into edit commnet
             var form = $(this).parent();
             if (!form.find('button').length) {
-                $(this).find('.comment-form').append('<div><table><tbody><tr><td><button class="publish" id="update-it">Update Comment</button></td><td><button class="publish" id="cancel-it">Cancel</button></td></tr></tbody></table></div>');
+                $(this).find('.comment-edit-form').append('<div><button class="publish" id="publish-it">Update Comment</button></div>');
              }
         });
-        $('tbody').on('mouseleave', '.comment-edit', function(){
+        $('body').on('mouseleave', '.comment-edit', function(){
             if ($(this).find('textarea').attr('title') == $(this).find('textarea').val()) {
-              console.log('clicked on comment-edit');
-              console.log($(this).prev());
               $(this).prev().attr('class', 'comment');
               $(this).remove();
             }
         });
-        $('.comment-form').submit(function() {
-          event.preventDefault(); 
-          var id = $(this).attr('article');
+        $('body').on('submit', '.comment-form', function(e) {
+          var article_id = $(this).attr('article');
           var $textarea = $(this).find('textarea');
           var text = $textarea.val();
           $.ajax ({
               url: "/ArchiveService.post_comment",
               type: "POST",
-              data: JSON.stringify({"article_id": id, "comment_text": text}),
+              data: JSON.stringify({"article_id": article_id, "comment_text": text}),
               dataType: "json",
               contentType: "application/json; charset=utf-8",
               success: function(data) {
-                  console.log('  id = ', data.comment_id,
-                              '  url = ', data.user_url,
-                              '  user_activity = ', data.user_activity,
-                              '  nickname = ', data.nickname
-                              );
-                  // create next hidden comment row
-                  var $new_comment = '#comment-' + id + '-' + data.comment_id
-                  var $clone = $($new_comment).clone();
-                  $clone.attr('id', 'comment-' + id + '-' + (data.comment_id + 1));
-                  $('#comment-table-' + id).append($clone);
+                  // copy hidden comment row before modifying with new comment
+                  var $clone = $('#comment-' + article_id).clone();
+                  $('#comment-table-' + article_id).append($clone);
                   // fill in and unhide new comment row
-                  $($new_comment).find('span[class="comment-display"]').text(text);
-                  $($new_comment).find('a[class="comment-user"]').attr(data.user_url);
-                  $($new_comment).find('a[class="comment-user"]').text(data.nickname);
-                  $($new_comment).attr('class', 'comment');
+                  new_comment_id = 'comment-' + article_id + '-' + data.comment_id
+                  $('#comment-' + article_id).attr('id', new_comment_id);
+                  $('#' + new_comment_id).find('span[class="comment-display"]').text(text);
+                  $('#' + new_comment_id).find('a[class="comment-user"]').attr(data.user_url);
+                  $('#' + new_comment_id).find('a[class="comment-user"]').text(data.nickname);
+                  $('#' + new_comment_id).attr('comment-id', data.comment_id);
+                  $('#' + new_comment_id).attr('author', data.nickname);
+                  $('#' + new_comment_id).attr('class', 'comment');
               }
           });
           // reset comment form
@@ -216,7 +201,34 @@
            $($(this).find('div')).remove();
           return false;
         });
+        $('body').on('submit', '.comment-edit-form', function(e) {
+          var article_id = $(this).attr('article');
+          var comment_id = $(this).attr('comment-id');
+          var $textarea = $(this).find('textarea');
+          var text = $textarea.val();
+          $.ajax ({
+              url: "/ArchiveService.edit_comment",
+              type: "POST",
+              data: JSON.stringify({"article_id": article_id, 
+                                    "comment_text": text, 
+                                    "comment_id": comment_id}),
+              dataType: "json",
+              contentType: "application/json; charset=utf-8",
+              success: function(data) {
+                  // update and unhide edited comment
+                  new_comment_id = 'comment-' + article_id + '-' + comment_id;
+                  $('#' + new_comment_id).find('span[class="comment-display"]').text(text);
+                  $('#' + new_comment_id).find('span[class="comment-relativetime"]').text('0 minutes ago');
+                  $('#' + new_comment_id).attr('class', 'comment');
+                  $('#' + new_comment_id).next().remove();
+              }
+          });
+          // reset comment form
+                  console.log('editing comment', comment_id);
+          return false;
+        });
       });
+
 		</script>
   </body>
 </html>
