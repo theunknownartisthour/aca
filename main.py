@@ -47,9 +47,9 @@ def format_comments(comments=None, article_id=None):
   for comment in comments:
     template_data.update({
         'comment_id': str(comment_id),
-        'comment_display': loads(comment)[0],
-        'nickname': loads(comment)[1],
-        'comment_date': loads(comment)[2],
+        'comment_display': loads(str(comment))[0],
+        'nickname': str(loads(str(comment))[1]).split('@',2)[0],
+        'comment_date': loads(str(comment))[2],
         'time_now': datetime.now()
         })
     comment_id += 1
