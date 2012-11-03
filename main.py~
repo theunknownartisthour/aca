@@ -44,23 +44,29 @@ def format_comments(comments=None, article_id=None):
   path = os.path.join(os.path.dirname(__file__), 'comment-table-template.html' )
   all_comments = '<div class="below-video tags">Comments:<table><tbody id="comment-table-' + str(article_id) + '">'
   comment_id = 0
-  for comment in comments:
+  template_data.update({'comment_id': len(comments)})
+  tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
+  all_comments += tostring(tree.xpath('//tfoot')[0])
+  all_comments = '<div class="below-video tags">Comments:<table><tbody id="comment-table-' + str(  for comment in comments:
+    nickname = str(loads(str(comment))[1]).split('@',2)[0]
     template_data.update({
-        'comment_id': str(article_id) + '-' + str(comment_id),
-        'comment_display': loads(comment)[0],
-        'nickname': loads(comment)[1],
-        'comment_date': loads(comment)[2],
+        'comment_id': str(comment_id),
+        'comment_display': loads(str(comment))[0],
+        'nickname': nickname,
+        'comment_date': loads(str(comment))[2],
         'time_now': datetime.now()
         })
     comment_id += 1
     tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
-    all_comments += tostring(tree.xpath('//tr')[0])
+    if nickname != '':
+      all_comments += tostring(tree.xpath('//tr')[0])
+    else:
+      all_comments += tostring(tree.xpath('//tr')[1]) #deleted comment tr
+    
   #place an empty hidden comment last
-  template_data.update({'comment_id': str(article_id) + '-' + str(comment_id)})
   tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
-  all_comments += tostring(tree.xpath('//tr')[1])
-  all_comments += '</tbody>'
-  all_comments += tostring(tree.xpath('//tfoot')[0]) + '</table></div>'
+  all_comments += tostring(tree.xpath('//tr')[2])
+  all_comments += '</tbody></table></div>'
   return all_comments
   
 def get_articles(author=None):
@@ -114,7 +120,7 @@ class MainPage(webapp2.RequestHandler):
             }
     user = users.get_current_user()
     if user:
-      template_data.update({'greeting': ('<div class="signed-in"> %s <a class="sign-out" href="%s">(sign out)</a></div>' % (user.nickname(), users.create_logout_url("/")))})
+      template_data.update({'greeting': ('<div class="signed-in" nickname="%s"> %s <a class="sign-out" href="%s">(sign out)</a></div>' % (user.nickname(), user.nickname(), users.create_logout_url("/")))})
       template_data.update({'nickname': user.nickname()})
     else:
       template_data.update({'greeting': ('<a id="not-signed-in" class="sign-in" href="%s">Sign in or register</a>' % users.create_login_url("/"))})
@@ -152,7 +158,7 @@ class PublishArticleForm(webapp2.RequestHandler):
               'user': user.nickname(),
               }
     else:
-      return self.redirect(users.create_login_url("/"))
+      return self.redirect(users.create_login_url("/publish-article-form"))
       
     self.response.out.write('<html><body><p>Article will be published by: %s</p>' % greeting)
     self.response.out.write("""

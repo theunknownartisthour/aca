@@ -124,6 +124,10 @@ div[class*="side-bar"]{
   font-size: 14px;
   border: 1px solid #888;
 }
+.deleted {
+display: none;
+visibility: hidden;
+}
 tr.comment-display  {
 }
 td.comment-info  {
@@ -150,6 +154,8 @@ span.comment-relativetime {
   -moz-transition: height 0.2s; 
 }
 
+form > p { margin: 0px;}
+
 .txt:focus, .txtarea:focus { border-style: solid; border-color: #bababa; color: #444; }
 
 input.error, textarea.error { border-color: #973d3d; border-style: solid; background: #f0bebe; color: #a35959; }
@@ -157,7 +163,6 @@ input.error:focus, textarea.error:focus { border-color: #973d3d; color: #a35959;
 
 .publish { 
 color: #dee5f0;
-min-width: 130px;
 margin-left: 5px;
 display: block;
 cursor: pointer;

@@ -1,5 +1,5 @@
 application: art-crime-archive
-version: 0-1-1-comments
+version: 0-1-2-comments
 runtime: python27
 api_version: 1
 threadsafe: yes

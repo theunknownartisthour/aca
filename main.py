@@ -42,25 +42,33 @@ def format_comments(comments=None, article_id=None):
 #todo - build comment tree by replacing and adding.
 #todo - add delete comment or report abuse.
   path = os.path.join(os.path.dirname(__file__), 'comment-table-template.html' )
-  all_comments = '<div class="below-video tags">Comments:<table><tbody id="comment-table-' + str(article_id) + '">'
+  all_comments = '<div class="below-video tags">Comments:<table>'
+  template_data.update({'comment_id': len(comments)})
+  tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
+  all_comments += tostring(tree.xpath('//tfoot')[0])#needs better element addressing
+  all_comments += '<tbody id="comment-table-' + str(article_id) + '">'
   comment_id = 0
   for comment in comments:
+    nickname = str(loads(str(comment))[1]).split('@',2)[0]
     template_data.update({
         'comment_id': str(comment_id),
         'comment_display': loads(str(comment))[0],
-        'nickname': str(loads(str(comment))[1]).split('@',2)[0],
+        'nickname': nickname,
         'comment_date': loads(str(comment))[2],
         'time_now': datetime.now()
         })
-    comment_id += 1
     tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
-    all_comments += tostring(tree.xpath('//tr')[0])
+    if nickname != '':
+      all_comments += tostring(tree.xpath('//tr')[1])
+    else:
+      all_comments += tostring(tree.xpath('//tr')[2]) #deleted comment tr
+    comment_id += 1
+    
   #place an empty hidden comment last
-  template_data.update({'comment_id': str(comment_id)})
+  template_data.update({'comment_id': len(comments)})
   tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
-  all_comments += tostring(tree.xpath('//tr')[1])
-  all_comments += '</tbody>'
-  all_comments += tostring(tree.xpath('//tfoot')[0]) + '</table></div>'
+  all_comments += tostring(tree.xpath('//tr')[3]) #hidden comment tr
+  all_comments += '</tbody></table></div>'
   return all_comments
   
 def get_articles(author=None):
