@@ -11,51 +11,9 @@ curl -H 'content-type:application/json' -d '{"article_id": 24, "comment_text"
 : "This comment was edited via the service", "comment_id": 15}' http://localhos
 t:8087/ArchiveService.edit_comment
 
-curl -H 'content-type:application/json' -d '{"article_id": 5, "comment_text": "", "comment_id": 5}' http://localhost:8087/ArchiveService.delete_comment
+curl -H 'content-type:application/json' -d '{"article_id": 13001, "comment_text": "", "comment_id": 5}' http://localhost:8087/ArchiveService.delete_comment
 
+curl -H 'content-type:application/json' -d '{"article_id": 13001, "comment_text": "", "comment_id": 5}' http://localhost:8087/ArchiveService.delete_comment
 
-          $.post("/ArchiveService.post_comment", {"article_id": id, "comment_text": text}, function(data) {
-                alert("response: " + data);}, "json");
-$('#comment-table-' + id).append(
-, $(this).find('textarea').text()
+curl -H 'content-type:application/json' -d '{embed: "embed code goes here", title: "this is the title", "content": "the body of the article", tags: "tag1, tag2, tag3"}' http://localhost:8087/ArchiveService.post_article
 
-import calendar
-print(calendar.timegm(datetime.datetime.utcnow().utctimetuple()))
-
-from google.appengine.ext import db
-from pickle import dumps, loads
-
-class Articles(db.Model):
-  """Models an individual Archive entry"""
-  author = db.StringProperty()
-  embed = db.TextProperty()
-  title = db.StringProperty()
-  content = db.TextProperty()
-  tags = db.TextProperty()
-  comments = db.ListProperty(db.Text)
-  view = db.StringProperty() #Publish, Preview or Retract
-  date = db.DateTimeProperty(auto_now_add=True)
-
-def archive_key(Archive_name=None):
-  """Constructs a Datastore key for an Archive entity."""
-  return db.Key.from_path('Archive', Archive_name or 'test_archive')
-
-print(loads(Articles.get_by_id(24, parent=archive_key()).comments[0])[0])
-
-#must destructure each comment into json data.
-print([loads(comment)for comment in Articles.get_by_id(24, parent=archive_key()).comments])
-  
-articles = db.GqlQuery("SELECT * "
-                           "FROM Articles "
-                           "WHERE ANCESTOR IS :key "
-                           "AND view = 'Publish' "
-                           "ORDER BY date DESC LIMIT 20",
-                           key=archive_key())
-query = Articles.all().order('date')
-query.filter('view =', 'Publish')
-
-print(query.fetch(10))
-print(loads(articles[1].comments[0])[0])
-print(Articles.get_by_id(24))
-
-print(Articles.all().filter('__key__ = ', 24))

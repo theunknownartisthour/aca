@@ -54,6 +54,9 @@ div[class*="side-bar"]{
 .right-side-bar {
   margin-right: 20px;
  }
+#twitter {
+  margin-top: 20px;
+}
 .center-stage {
   padding: 10px;
   padding-top: 0px;

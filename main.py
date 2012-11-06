@@ -1,6 +1,11 @@
 #
 # Copyright 2012 Dan Salmonsen
 #
+# todo - create single page template that works for all site URLS
+# todo - active link set by javascript based on page URL
+# todo - History.js based navigation
+# todo - hide / show relevent content
+
 from protorpc.wsgi import service
 import webapp2, os, json
 from google.appengine.ext.webapp import template

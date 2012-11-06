@@ -15,4 +15,5 @@ curl -H 'content-type:application/json' -d '{"article_id": 13001, "comment_text"
 
 curl -H 'content-type:application/json' -d '{"article_id": 13001, "comment_text": "", "comment_id": 5}' http://localhost:8087/ArchiveService.delete_comment
 
+curl -H 'content-type:application/json' -d '{"embed": "embed code goes here", "title": "this is the title", "content": "the body of the article", "tags": "tag1, tag2, tag3", "view": "Publish"}' http://localhost:8087/ArchiveService.post_article
 

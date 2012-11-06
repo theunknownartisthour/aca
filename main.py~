@@ -1,6 +1,9 @@
 #
 # Copyright 2012 Dan Salmonsen
 #
+# todo - create single page template that works for all site URLS
+# todo - active link set by javascript based on page URL
+# todo - History.js based 
 from protorpc.wsgi import service
 import webapp2, os, json
 from google.appengine.ext.webapp import template
@@ -42,12 +45,13 @@ def format_comments(comments=None, article_id=None):
 #todo - build comment tree by replacing and adding.
 #todo - add delete comment or report abuse.
   path = os.path.join(os.path.dirname(__file__), 'comment-table-template.html' )
-  all_comments = '<div class="below-video tags">Comments:<table><tbody id="comment-table-' + str(article_id) + '">'
-  comment_id = 0
+  all_comments = '<div class="below-video tags">Comments:<table>'
   template_data.update({'comment_id': len(comments)})
   tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
-  all_comments += tostring(tree.xpath('//tfoot')[0])
-  all_comments = '<div class="below-video tags">Comments:<table><tbody id="comment-table-' + str(  for comment in comments:
+  all_comments += tostring(tree.xpath('//tfoot')[0])#needs better element addressing
+  all_comments += '<tbody id="comment-table-' + str(article_id) + '">'
+  comment_id = 0
+  for comment in comments:
     nickname = str(loads(str(comment))[1]).split('@',2)[0]
     template_data.update({
         'comment_id': str(comment_id),
@@ -56,16 +60,17 @@ def format_comments(comments=None, article_id=None):
         'comment_date': loads(str(comment))[2],
         'time_now': datetime.now()
         })
-    comment_id += 1
     tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
     if nickname != '':
-      all_comments += tostring(tree.xpath('//tr')[0])
+      all_comments += tostring(tree.xpath('//tr')[1])
     else:
-      all_comments += tostring(tree.xpath('//tr')[1]) #deleted comment tr
+      all_comments += tostring(tree.xpath('//tr')[2]) #deleted comment tr
+    comment_id += 1
     
   #place an empty hidden comment last
+  template_data.update({'comment_id': len(comments)})
   tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
-  all_comments += tostring(tree.xpath('//tr')[2])
+  all_comments += tostring(tree.xpath('//tr')[3]) #hidden comment tr
   all_comments += '</tbody></table></div>'
   return all_comments
   
