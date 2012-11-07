@@ -56,6 +56,13 @@ div[class*="side-bar"]{
  }
 #twitter {
   margin-top: 20px;
+  margin-right: 20px;
+}
+#create-article-div  {
+  margin-top: 20px;
+}
+#create-article-div * textarea {
+  width: 100%;
 }
 .center-stage {
   padding: 10px;

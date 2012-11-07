@@ -123,7 +123,8 @@ class MainPage(webapp2.RequestHandler):
             'my_articles': '',
             'publish_article': '',
             'about': '',
-            'center_stage': get_articles()
+            'url_path': self.request.path,
+            'loading_content': 'loading articles'
             }
     user = users.get_current_user()
     if user:
@@ -133,29 +134,37 @@ class MainPage(webapp2.RequestHandler):
       template_data.update({'greeting': ('<a id="not-signed-in" class="sign-in" href="%s">Sign in or register</a>' % users.create_login_url("/"))})
       template_data.update({'nickname': ''})
 
+    if self.request.path == '/':
+      template_data.update({ #move this into page template
+        'the_archive': 'class="active"',
+        'my_articles': '',
+        'create_article': '',
+        'about': '',
+        'the_archive_content': get_articles()})
+
     if self.request.path == '/my-articles':
       template_data.update({
         'the_archive': '',
         'my_articles': 'class="active"',
-        'publish_article': '',
+        'create_article': '',
         'about': '',
-        'center_stage': get_articles(template_data['nickname'])})
+        'my_articles_content': get_articles(template_data['nickname'])})
 
     if self.request.path == '/about':
       tree = html.parse('About-the-Art-Crime-Archive.html')
       template_data.update({
         'the_archive': '',
         'my_articles': '',
-        'publish_article': '',
+        'create_article': '',
         'about': 'class="active"',
         'style':  tostring(tree.xpath('//style')[0]),
-        'center_stage': innerHTML('About-the-Art-Crime-Archive.html', 'body')})
+        'about_content': innerHTML('About-the-Art-Crime-Archive.html', 'body')})
 
     path = os.path.join(os.path.dirname(__file__), 'index.html' )
     self.response.headers['X-XSS-Protection'] = '0' #prevents blank embed after post
     self.response.out.write(template.render(path, template_data))
 
-class PublishArticleForm(webapp2.RequestHandler):
+class CreateArticleForm(webapp2.RequestHandler):
   def get(self):
     user = users.get_current_user()
     if user:
@@ -167,10 +176,9 @@ class PublishArticleForm(webapp2.RequestHandler):
     else:
       return self.redirect(users.create_login_url("/publish-article-form"))
       
-    self.response.out.write('<html><body><p>Article will be published by: %s</p>' % greeting)
     self.response.out.write("""
           <form action="/publish-it" method="post">
-            <div>Embed-code<br /><textarea name="embed-code" rows="6" cols="80"></textarea></div>
+            <div>Embed-code<br /><textarea name="embed-code" rows="6" cols="auto"></textarea></div>
             <div><input type="hidden"></div>
             <div>Title<br /><textarea name="title" rows="1" cols="80"></textarea></div>
             <div><input type="hidden"></div>
@@ -222,7 +230,6 @@ class EditArticleForm(webapp2.RequestHandler):
     if not user:
       return self.redirect(users.create_login_url("/"))
 
-    self.response.out.write('<html><body><p>Article will be published by: %s</p>' % user.nickname().split('@',2)[0])
     self.response.out.write("""
           <form action="/publish-it?id=%s" method="post">
             <div>Embed<br /><textarea name="embed-code" rows="6" cols="80">%s</textarea></div>
@@ -241,7 +248,7 @@ class EditArticleForm(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([('/', MainPage),
                                ('/my-articles', MainPage), 
                                ('/about', MainPage),                               
-                               ('/publish-article-form', PublishArticleForm),
+                               ('/create-article', CreateArticleForm),
                                ('/edit-article-form', EditArticleForm),
                                ('/publish-it', PublishArticle),
                                ('/comment-on', Comment)],
