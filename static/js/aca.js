@@ -40,10 +40,7 @@ $(document).ready(function () {
   }
   var updateMainView = function(state){
       // Make clicked menu active
-  console.log('in uMV ', '#' + state);
   $('#' + state + '-div').removeClass('hidden').siblings().addClass('hidden');
-//        $('#' + state + '-div').siblings().addClass('hidden');
-    // unhide selected sections and hide all others
   };
   if (location.pathname == '/') {
     updateNav('the-archive');

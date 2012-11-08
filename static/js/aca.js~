@@ -7,6 +7,7 @@ $(function(){
   $('.comment-text[title!=""]').hint();
 });
 $(document).ready(function () {
+  console.log($.History);
   <!-- set temporary width -->
   var windowWidth = (parseInt($(window).width())) * 0.75;
   $('#loading-message').css({'width':windowWidth});
@@ -67,7 +68,7 @@ $(document).ready(function () {
     }
     $(".center-stage").fitVids({ customSelector: "object[src^='/']"});
     console.log('fitvid was called');
- });
+  });
   $.History.bind('my-articles', function(state){
     updateNav(state);
     updateMainView(state);
