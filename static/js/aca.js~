@@ -7,7 +7,6 @@ $(function(){
   $('.comment-text[title!=""]').hint();
 });
 $(document).ready(function () {
-  console.log($.History);
   <!-- set temporary width -->
   var windowWidth = (parseInt($(window).width())) * 0.75;
   $('#loading-message').css({'width':windowWidth});
@@ -33,62 +32,44 @@ $(document).ready(function () {
       $(form.find('div')).remove();
     }
   });
-  // History
-  // set inital state to accessed page
-  var updateNav = function(state){
-      // Make clicked menu active
-  $('a[href="#'+state+'"]').parent().addClass('active').siblings('.active').removeClass('active');
+  // History.js - HTML5 History API handling 
+  var History = window.History;
+  if (History.enabled) {
+      State = History.getState();
+      // set initial state to first page that was loaded
+      console.log(window.location.pathname);
+      History.pushState({urlPath: window.location.pathname}, $("title").text(), State.urlPath);
+  } else {
+      return false;
   }
-  var updateMainView = function(state){
-      // Make clicked menu active
-  $('#' + state + '-div').removeClass('hidden').siblings().addClass('hidden');
+
+  var loadAjaxContent = function(target, urlBase, selector) {
+      console.log('in loadAjaxContent, urlBase =', selector);
+      $(content).load(urlBase + ' ' + selector);
   };
-  if (location.pathname == '/') {
-    updateNav('the-archive');
-    updateMainView('the-archive');
-  }
-  if (location.pathname == '/my-articles') {
-    updateNav('my-articles');
-    updateMainView('my-articles');
-    $('#the-archive-div').load('/ #the-archive-div > *');
-  }
-  if (location.pathname == '/about') {
-    updateNav('about');
-    updateMainView('about');
-  }
-  $.History.bind(function(state){
-      // Update the current element to indicate which state we are now on
-      console.log('Our current state is: ['+state+']');
+
+  var updateContent = function(State) {
+      var selector = '#' + State.data.urlPath.substring(1);
+      if ($(selector).length) { //content is already in #hidden_content
+          $('#content div').appendTo('#hidden_content');
+          $(selector).appendTo('#content');
+      } else { 
+          $('#content div').clone().appendTo('#hidden_content');
+          loadAjaxContent('#content', State.url, selector);
+      }
+  };
+
+  // Content update and back/forward button handler
+  History.Adapter.bind(window, 'statechange', function() {
+      updateContent(History.getState());
   });
-  $.History.bind('the-archive', function(state){
-    updateNav(state);
-    updateMainView(state);
-    if (!$('#the-archive-div').contents().length) {
-      $('#the-archive-div').load('/ #the-archive-div > *');
-    }
-    $(".center-stage").fitVids({ customSelector: "object[src^='/']"});
-    console.log('fitvid was called');
-  });
-  $.History.bind('my-articles', function(state){
-    updateNav(state);
-    updateMainView(state);
-    if (!$('#my-articles-div').contents().length) {
-      $('#my-articles-div').load('my-articles #my-articles-div > *');
-    }
-  });
-  $.History.bind('create-article', function(state){
-    updateNav(state);
-    updateMainView(state);
-    if (!$('#create-article-div').contents().length) {
-      $('#create-article-div').load('create-article');
-    }
-  });
-  $.History.bind('about', function(state){
-    updateNav(state);
-    updateMainView(state);
-    if (!$('#about-div').contents().length) {
-      $('#about-div').load('about #about-div > *');
-    }
+
+  // navigation link handler
+  $('body').on('click', 'a', function(e) {
+      var urlPath = $(this).attr('href');
+      var title = $(this).text();
+      History.pushState({urlPath: urlPath}, title, urlPath);
+      return false; // prevents default click action of <a ...>
   });
   // edit comment
   $('body').on('mouseenter', '.comment', function(){

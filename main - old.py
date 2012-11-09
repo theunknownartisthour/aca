@@ -118,13 +118,10 @@ class TestPage(webapp2.RequestHandler):
 
 class MainPage(webapp2.RequestHandler):
   def get(self):
-    if self.request.path == '/':
-      return self.redirect('/the-archive')
-
     template_data = {
             'url_path': self.request.path,
             'loading_content': 'loading articles',
-            'content': '<div id="' '>content for ' + self.request.path
+            'content': 'content for ' + self.request.path
             }
     user = users.get_current_user()
     if user:
@@ -220,7 +217,6 @@ class EditArticleForm(webapp2.RequestHandler):
                  sub('<[^>]*>', '', article.content), article.tags))
 
 app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/the-archive', MainPage), 
                                ('/my-articles', MainPage), 
                                ('/about', MainPage),                               
                                ('/create-article', MainPage),

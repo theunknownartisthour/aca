@@ -118,13 +118,13 @@ class TestPage(webapp2.RequestHandler):
 
 class MainPage(webapp2.RequestHandler):
   def get(self):
+    if self.request.path == '/':
+      return self.redirect('/the-archive')
+
     template_data = {
-            'the_archive': 'class="active"',
-            'my_articles': '',
-            'publish_article': '',
-            'about': '',
             'url_path': self.request.path,
-            'loading_content': 'loading articles'
+            'loading_content': 'loading articles',
+            'content': '<div id="%s">content for %s</div>' % (self.request.path[1:], self.request.path)
             }
     user = users.get_current_user()
     if user:
@@ -133,32 +133,6 @@ class MainPage(webapp2.RequestHandler):
     else:
       template_data.update({'greeting': ('<a id="not-signed-in" class="sign-in" href="%s">Sign in or register</a>' % users.create_login_url("/"))})
       template_data.update({'nickname': ''})
-
-    if self.request.path == '/':
-      template_data.update({ #move this into page template
-        'the_archive': 'class="active"',
-        'my_articles': '',
-        'create_article': '',
-        'about': '',
-        'the_archive_content': get_articles()})
-
-    if self.request.path == '/my-articles':
-      template_data.update({
-        'the_archive': '',
-        'my_articles': 'class="active"',
-        'create_article': '',
-        'about': '',
-        'my_articles_content': get_articles(template_data['nickname'])})
-
-    if self.request.path == '/about':
-      tree = html.parse('About-the-Art-Crime-Archive.html')
-      template_data.update({
-        'the_archive': '',
-        'my_articles': '',
-        'create_article': '',
-        'about': 'class="active"',
-        'style':  tostring(tree.xpath('//style')[0]),
-        'about_content': innerHTML('About-the-Art-Crime-Archive.html', 'body')})
 
     path = os.path.join(os.path.dirname(__file__), 'index.html' )
     self.response.headers['X-XSS-Protection'] = '0' #prevents blank embed after post
@@ -246,9 +220,10 @@ class EditArticleForm(webapp2.RequestHandler):
                  sub('<[^>]*>', '', article.content), article.tags))
 
 app = webapp2.WSGIApplication([('/', MainPage),
+                               ('/the-archive', MainPage), 
                                ('/my-articles', MainPage), 
                                ('/about', MainPage),                               
-                               ('/create-article', CreateArticleForm),
+                               ('/create-article', MainPage),
                                ('/edit-article-form', EditArticleForm),
                                ('/publish-it', PublishArticle),
                                ('/comment-on', Comment)],
