@@ -120,11 +120,17 @@ class MainPage(webapp2.RequestHandler):
   def get(self):
     if self.request.path == '/':
       return self.redirect('/the-archive')
+      
+    content_data = {
+            'content_id': self.request.path[1:],
+            'content': get_articles(),
+            }
+    path = os.path.join(os.path.dirname(__file__), 'content-template.html' )
 
     template_data = {
             'url_path': self.request.path,
             'loading_content': 'loading articles',
-            'content': '<div id="' '>content for ' + self.request.path
+            'content': template.render(path, content_data)
             }
     user = users.get_current_user()
     if user:

@@ -49,13 +49,13 @@ After working on this some more, I have come up with a simple, but complete exam
 
   var updateContent = function(State) {
       var selector = '#' + State.data.urlPath.substring(1);
-      if ($(selector).length) { //content is already in #hidden_content
-          $('#content div').appendTo('#hidden_content');
-          $(selector).appendTo('#content');
-      } else { 
-          $('#content div').clone().appendTo('#hidden_content');
-          loadAjaxContent('#content', State.url, selector);
-      }
+    if ($(selector).length) { //content is already in #hidden_content
+        $('#content').children().appendTo('#hidden_content');
+        $(selector).appendTo('#content');
+    } else { 
+        $('#content').children().clone().appendTo('#hidden_content');
+        loadAjaxContent('#content', State.url, selector);
+    }
   };
 
   // Content update and back/forward button handler

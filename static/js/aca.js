@@ -32,6 +32,10 @@ $(document).ready(function () {
       $(form.find('div')).remove();
     }
   });
+  var updateNav = function(urlPath) {
+  $('a[href="' + urlPath + '"]').parent().addClass('active').siblings('.active').removeClass('active');
+  };
+
   // History.js - HTML5 History API handling 
   var History = window.History;
   if (History.enabled) {
@@ -39,6 +43,7 @@ $(document).ready(function () {
       // set initial state to first page that was loaded
       console.log(window.location.pathname);
       History.pushState({urlPath: window.location.pathname}, $("title").text(), State.urlPath);
+      updateNav(window.location.pathname);
   } else {
       return false;
   }
@@ -51,16 +56,17 @@ $(document).ready(function () {
   var updateContent = function(State) {
       var selector = '#' + State.data.urlPath.substring(1);
       if ($(selector).length) { //content is already in #hidden_content
-          $('#content div').appendTo('#hidden_content');
+          $('#content').children().appendTo('#hidden_content');
           $(selector).appendTo('#content');
       } else { 
-          $('#content div').clone().appendTo('#hidden_content');
+          $('#content').children().clone(true, true).appendTo('#hidden_content');
           loadAjaxContent('#content', State.url, selector);
       }
   };
 
   // Content update and back/forward button handler
   History.Adapter.bind(window, 'statechange', function() {
+      updateNav(window.location.pathname);
       updateContent(History.getState());
   });
 
