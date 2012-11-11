@@ -116,7 +116,7 @@ div[class*="side-bar"]{
   font-size: 14px;
   border-radius: 0px;
 }
-.tags {
+.tags, .comments{
   color: #000;
   font-family: Trebuchet MS, Helvetica, sans-serif;
   font-size: 14px;
@@ -125,14 +125,6 @@ div[class*="side-bar"]{
   color: #000;
   font-family: Trebuchet MS, Helvetica, sans-serif;
   font-size: 12px;
-}
-.comments{
-  margin-bottom: 7px;
-  padding: 5px;
-  color: #333;
-  font-family: Trebuchet MS, Helvetica, sans-serif;
-  font-size: 14px;
-  border: 1px solid #888;
 }
 .deleted {
 display: none;

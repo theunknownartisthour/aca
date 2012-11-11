@@ -48,21 +48,22 @@ $(document).ready(function () {
       return false;
   }
 
-  var loadAjaxContent = function(target, urlBase, selector) {
-      console.log('in loadAjaxContent, urlBase =', selector);
-      $(target).load(urlBase + ' ' + selector);
-  };
+var loadAjaxContent = function(target, urlBase, selector) {
+    $('#ajax_content').load(urlBase + ' ' + selector, function() {
+        $(selector).appendTo(target).siblings().addClass('hidden');
+        $(".center-stage").fitVids({ customSelector: "object[src^='/']"});
+    });
+};
 
-  var updateContent = function(State) {
-      var selector = '#' + State.data.urlPath.substring(1);
-      if ($(selector).length) { //content is already in #hidden_content
-          $('#content').children().appendTo('#hidden_content');
-          $(selector).appendTo('#content');
-      } else { 
-          $('#content').children().clone(true, true).appendTo('#hidden_content');
-          loadAjaxContent('#content', State.url, selector);
-      }
-  };
+var updateContent = function(State) {
+    var selector = '#' + State.data.urlPath.substring(1);
+    if ($(selector).length) { //content is loaded but hidden
+        $(selector).siblings().addClass('hidden');
+        $(selector).removeClass('hidden');
+    } else {
+        loadAjaxContent('#content', State.url, selector);
+    }
+};
 
   // Content update and back/forward button handler
   History.Adapter.bind(window, 'statechange', function() {

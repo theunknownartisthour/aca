@@ -5,8 +5,6 @@
 # todo - active link set by javascript based on page URL
 # todo - History.js based navigation
 # todo - hide / show relevent content
-# scroll / multi-page load
-# 
 
 from protorpc.wsgi import service
 import webapp2, os, json
@@ -47,9 +45,9 @@ def format_comments(comments=None, article_id=None):
                   '<textarea class="comment-text" name="comment-text" title="add your comment..."></textarea>'
                   '</form>' % article_id)
 #todo - build comment tree by replacing and adding.
-#todo - add report abuse.
+#todo - add delete comment or report abuse.
   path = os.path.join(os.path.dirname(__file__), 'comment-table-template.html' )
-  all_comments = '<div class="below-video comments">Comments:<table>'
+  all_comments = '<div class="below-video tags">Comments:<table>'
   template_data.update({'comment_id': len(comments)})
   tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
   all_comments += tostring(tree.xpath('//tfoot')[0])#needs better element addressing
@@ -120,28 +118,47 @@ class TestPage(webapp2.RequestHandler):
 
 class MainPage(webapp2.RequestHandler):
   def get(self):
+    template_data = {
+            'the_archive': 'class="active"',
+            'my_articles': '',
+            'publish_article': '',
+            'about': '',
+            'url_path': self.request.path,
+            'loading_content': 'loading articles'
+            }
     user = users.get_current_user()
     if user:
-      greeting = ('<div class="signed-in" nickname="%s"> %s <a class="sign-out" href="%s">(sign out)</a></div>' % (user.nickname(), user.nickname(), users.create_logout_url("/")))
-      nickname = user.nickname()
+      template_data.update({'greeting': ('<div class="signed-in" nickname="%s"> %s <a class="sign-out" href="%s">(sign out)</a></div>' % (user.nickname(), user.nickname(), users.create_logout_url("/")))})
+      template_data.update({'nickname': user.nickname()})
     else:
-      greeting = ('<a id="not-signed-in" class="sign-in" href="%s">Sign in or register</a>' % users.create_login_url("/"))
-      nickname = ''
+      template_data.update({'greeting': ('<a id="not-signed-in" class="sign-in" href="%s">Sign in or register</a>' % users.create_login_url("/"))})
+      template_data.update({'nickname': ''})
 
     if self.request.path == '/':
-      return self.redirect('/the-archive')
-    if self.request.path == '/the-archive':
-      content = get_articles()
-    elif self.request.path == '/my-articles':
-      content = get_articles(user.nickname())
-    elif self.request.path == '/about':
-      content = innerHTML('About-the-Art-Crime-Archive.html', 'body')
-  
-    template_data = {
-            'content_id': self.request.path[1:],
-            'content': content,
-            'nickname': nickname
-            }
+      template_data.update({ #move this into page template
+        'the_archive': 'class="active"',
+        'my_articles': '',
+        'create_article': '',
+        'about': '',
+        'the_archive_content': get_articles()})
+
+    if self.request.path == '/my-articles':
+      template_data.update({
+        'the_archive': '',
+        'my_articles': 'class="active"',
+        'create_article': '',
+        'about': '',
+        'my_articles_content': get_articles(template_data['nickname'])})
+
+    if self.request.path == '/about':
+      tree = html.parse('About-the-Art-Crime-Archive.html')
+      template_data.update({
+        'the_archive': '',
+        'my_articles': '',
+        'create_article': '',
+        'about': 'class="active"',
+        'style':  tostring(tree.xpath('//style')[0]),
+        'about_content': innerHTML('About-the-Art-Crime-Archive.html', 'body')})
 
     path = os.path.join(os.path.dirname(__file__), 'index.html' )
     self.response.headers['X-XSS-Protection'] = '0' #prevents blank embed after post
@@ -191,6 +208,19 @@ class PublishArticle(webapp2.RequestHandler):
       return self.redirect('/my-articles')
     return self.redirect('/')
 
+class Comment(webapp2.RequestHandler):
+  def post(self):
+    if self.request.get('id') is not '':
+      article_id = int(self.request.get('id'))
+      article = Articles(parent=archive_key()).get_by_id(article_id, parent=archive_key())
+    else:
+      article = Articles(parent=archive_key())
+
+    pickled = db.Text(dumps([self.request.get('comment-text'), users.get_current_user(), datetime.now()]))
+    article.comments.append(pickled)
+    article.put()
+    return self.redirect('/')
+
 class EditArticleForm(webapp2.RequestHandler):
   def get(self):
     article_id = int(self.request.get('id'))
@@ -216,10 +246,10 @@ class EditArticleForm(webapp2.RequestHandler):
                  sub('<[^>]*>', '', article.content), article.tags))
 
 app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/the-archive', MainPage), 
                                ('/my-articles', MainPage), 
                                ('/about', MainPage),                               
-                               ('/create-article', MainPage),
+                               ('/create-article', CreateArticleForm),
                                ('/edit-article-form', EditArticleForm),
-                               ('/publish-it', PublishArticle)],
+                               ('/publish-it', PublishArticle),
+                               ('/comment-on', Comment)],
                                 debug=True)

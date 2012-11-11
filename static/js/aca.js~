@@ -43,31 +43,30 @@ $(document).ready(function () {
       // set initial state to first page that was loaded
       console.log(window.location.pathname);
       History.pushState({urlPath: window.location.pathname}, $("title").text(), State.urlPath);
-      updateNavfunction(window.location.pathname);
+      updateNav(window.location.pathname);
   } else {
       return false;
   }
 
-  var loadAjaxContent = function(target, urlBase, selector) {
-      console.log('in loadAjaxContent, urlBase =', selector);
-      $(target).load(urlBase + ' ' + selector);
-  };
+var loadAjaxContent = function(target, urlBase, selector) {
+    $('#ajax_content').load(urlBase + ' ' + selector, function() {
+        $(selector).appendTo(target).siblings().addClass('hidden');
+    });
+};
 
-  var updateContent = function(State) {
-      var selector = '#' + State.data.urlPath.substring(1);
-      //update nav bar
-      console.log('a[href="'+State.data.urlPath+'"]');
-      if ($(selector).length) { //content is already in #hidden_content
-          $('#content div').appendTo('#hidden_content');
-          $(selector).appendTo('#content');
-      } else { 
-          $('#content div').clone().appendTo('#hidden_content');
-          loadAjaxContent('#content', State.url, selector);
-      }
-  };
+var updateContent = function(State) {
+    var selector = '#' + State.data.urlPath.substring(1);
+    if ($(selector).length) { //content is loaded but hidden
+        $(selector).siblings().addClass('hidden');
+        $(selector).removeClass('hidden');
+    } else {
+        loadAjaxContent('#content', State.url, selector);
+    }
+};
 
   // Content update and back/forward button handler
   History.Adapter.bind(window, 'statechange', function() {
+      updateNav(window.location.pathname);
       updateContent(History.getState());
   });
 
