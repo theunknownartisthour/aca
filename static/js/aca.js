@@ -29,9 +29,8 @@ console.log('docReady');
     }
   });
   $('.comment-text').blur(function() {
-  console.log('blur', $(this));
     var form = $(this).parent()
-    if ($.trim($(this).val()) == "add your comment...") {
+    if ($(this).val().trim() == '') {
         // user did not add comment, remove the div with publish comment button
       $(form.find('div')).remove();
     }

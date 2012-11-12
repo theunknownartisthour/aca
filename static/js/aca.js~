@@ -3,8 +3,7 @@ $(function(){
   $('.comment-text').autosize({append: "\n"});
 });
 $(function(){ 
-  // Place hints in all comment-text input elements with empty title attributes
-//  $('.comment-text[title!=""]').hint();
+  // Place hints in all comment-text textarea elements
   $(".comment-text").hint({text:"add your comment..."});
 });
 
@@ -30,9 +29,9 @@ console.log('docReady');
     }
   });
   $('.comment-text').blur(function() {
-  console.log($(this).val());
+  console.log('blur', $(this), $(this).val());
     var form = $(this).parent()
-    if ($.trim($(this).val()) == "add your comment...") {
+    if ($trim($(this).val()) == '') {
         // user did not add comment, remove the div with publish comment button
       $(form.find('div')).remove();
     }
@@ -159,9 +158,8 @@ var updateContent = function(State) {
         }
     });
     // reset comment form
-    $textarea.val('');
-    $('.comment-text[title!=""]').hint();
-     $($(this).find('div')).remove();
+    $textarea.val('add your comment...');
+    $($(this).find('div')).remove();
     return false;
   });
   $('body').on('submit', '.comment-edit-form', function(e) {
