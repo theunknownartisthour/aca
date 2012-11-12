@@ -6,7 +6,7 @@
 # todo - History.js based navigation
 # todo - hide / show relevent content
 # scroll / multi-page load
-# 
+# unique URL for each article
 
 from protorpc.wsgi import service
 import webapp2, os, json
@@ -140,7 +140,8 @@ class MainPage(webapp2.RequestHandler):
     template_data = {
             'content_id': self.request.path[1:],
             'content': content,
-            'nickname': nickname
+            'nickname': nickname,
+            'greeting': greeting
             }
 
     path = os.path.join(os.path.dirname(__file__), 'index.html' )
@@ -160,8 +161,9 @@ class CreateArticleForm(webapp2.RequestHandler):
       return self.redirect(users.create_login_url("/publish-article-form"))
       
     self.response.out.write("""
+          <div id="%s" class="center-stage">
           <form action="/publish-it" method="post">
-            <div>Embed-code<br /><textarea name="embed-code" rows="6" cols="auto"></textarea></div>
+            <div>Embed-code<br /><textarea name="embed-code" rows="6" cols="auto"  class="boxsizingBorder"></textarea></div>
             <div><input type="hidden"></div>
             <div>Title<br /><textarea name="title" rows="1" cols="80"></textarea></div>
             <div><input type="hidden"></div>
@@ -169,7 +171,8 @@ class CreateArticleForm(webapp2.RequestHandler):
             <div>Tags<br /><textarea name="tags" rows="1" cols="80"></textarea></div>
             <div><input type="submit" name="view" value="Preview"></div>
           </form>
-          """)
+          </div>
+          """ % self.request.path[1:])
 
 
 class PublishArticle(webapp2.RequestHandler):
@@ -219,7 +222,7 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/the-archive', MainPage), 
                                ('/my-articles', MainPage), 
                                ('/about', MainPage),                               
-                               ('/create-article', MainPage),
+                               ('/create-article', CreateArticleForm),
                                ('/edit-article-form', EditArticleForm),
                                ('/publish-it', PublishArticle)],
                                 debug=True)

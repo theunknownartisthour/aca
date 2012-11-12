@@ -6,7 +6,7 @@
 # todo - History.js based navigation
 # todo - hide / show relevent content
 # scroll / multi-page load
-# 
+# unique URL for each article
 
 from protorpc.wsgi import service
 import webapp2, os, json
@@ -49,7 +49,7 @@ def format_comments(comments=None, article_id=None):
 #todo - build comment tree by replacing and adding.
 #todo - add report abuse.
   path = os.path.join(os.path.dirname(__file__), 'comment-table-template.html' )
-  all_comments = '<div class="below-video tags">Comments:<table>'
+  all_comments = '<div class="below-video comments">Comments:<table>'
   template_data.update({'comment_id': len(comments)})
   tree = fragment_fromstring(template.render(path, template_data), create_parent=False)
   all_comments += tostring(tree.xpath('//tfoot')[0])#needs better element addressing
@@ -160,6 +160,7 @@ class CreateArticleForm(webapp2.RequestHandler):
       return self.redirect(users.create_login_url("/publish-article-form"))
       
     self.response.out.write("""
+          <div id="%s">
           <form action="/publish-it" method="post">
             <div>Embed-code<br /><textarea name="embed-code" rows="6" cols="auto"></textarea></div>
             <div><input type="hidden"></div>
@@ -169,7 +170,8 @@ class CreateArticleForm(webapp2.RequestHandler):
             <div>Tags<br /><textarea name="tags" rows="1" cols="80"></textarea></div>
             <div><input type="submit" name="view" value="Preview"></div>
           </form>
-          """)
+          </div>
+          """ % self.request.path[1:])
 
 
 class PublishArticle(webapp2.RequestHandler):
@@ -219,7 +221,7 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/the-archive', MainPage), 
                                ('/my-articles', MainPage), 
                                ('/about', MainPage),                               
-                               ('/create-article', MainPage),
+                               ('/create-article', CreateArticleForm),
                                ('/edit-article-form', EditArticleForm),
-                               ('/publish-it', PublishArticle),
+                               ('/publish-it', PublishArticle)],
                                 debug=True)

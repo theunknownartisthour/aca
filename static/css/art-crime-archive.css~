@@ -56,8 +56,14 @@ div[class*="side-bar"]{
  }
 #twitter {
   margin-top: 20px;
+  margin-right: 20px;
 }
-.create-article tes
+#create-article-div  {
+  margin-top: 20px;
+}
+#create-article-div * textarea {
+  width: 100%;
+}
 .center-stage {
   padding: 10px;
   padding-top: 0px;
@@ -110,7 +116,7 @@ div[class*="side-bar"]{
   font-size: 14px;
   border-radius: 0px;
 }
-.tags {
+.tags, .comments{
   color: #000;
   font-family: Trebuchet MS, Helvetica, sans-serif;
   font-size: 14px;
@@ -119,14 +125,6 @@ div[class*="side-bar"]{
   color: #000;
   font-family: Trebuchet MS, Helvetica, sans-serif;
   font-size: 12px;
-}
-.comments{
-  margin-bottom: 7px;
-  padding: 5px;
-  color: #333;
-  font-family: Trebuchet MS, Helvetica, sans-serif;
-  font-size: 14px;
-  border: 1px solid #888;
 }
 .deleted {
 display: none;
@@ -156,6 +154,11 @@ span.comment-relativetime {
   transition: height 0.2s;
   -webkit-transition: height 0.2s; 
   -moz-transition: height 0.2s; 
+}
+div#create-article textarea {
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
 }
 
 form > p { margin: 0px;}

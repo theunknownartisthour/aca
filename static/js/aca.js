@@ -3,10 +3,13 @@ $(function(){
   $('.comment-text').autosize({append: "\n"});
 });
 $(function(){ 
-  // Place hints in all comment-text input elements with empty title attributes
-  $('.comment-text[title!=""]').hint();
+  // Place hints in all comment-text textarea elements
+  $(".comment-text").hint({text:"add your comment..."});
 });
-$(document).ready(function () {
+
+
+var docReady = function () {
+console.log('docReady');
   <!-- set temporary width -->
   var windowWidth = (parseInt($(window).width())) * 0.75;
   $('#loading-message').css({'width':windowWidth});
@@ -26,6 +29,7 @@ $(document).ready(function () {
     }
   });
   $('.comment-text').blur(function() {
+  console.log('blur', $(this));
     var form = $(this).parent()
     if ($.trim($(this).val()) == "add your comment...") {
         // user did not add comment, remove the div with publish comment button
@@ -52,6 +56,7 @@ var loadAjaxContent = function(target, urlBase, selector) {
     $('#ajax_content').load(urlBase + ' ' + selector, function() {
         $(selector).appendTo(target).siblings().addClass('hidden');
         $(".center-stage").fitVids({ customSelector: "object[src^='/']"});
+        docReady();
     });
 };
 
@@ -113,7 +118,7 @@ var updateContent = function(State) {
       }
   });
   $('body').on('click', '.comment-edit', function(){
-      // user has clicked into edit commnet
+      // user has clicked into edit comment
         console.log('in .comment-edit', $(this).find('input[class="publish"]').length);
       if (!$(this).find('input[class="publish"]').length) {
           $(this).find('.comment-edit-form').append('<div><input class="publish" id="publish-it" name="update" type="submit" value="Update" style="display: inline;" /><input class="publish" name="update" id="delete-it" type="submit" value="Delete" style="display: inline;"/></div>');
@@ -153,9 +158,8 @@ var updateContent = function(State) {
         }
     });
     // reset comment form
-    $textarea.val('');
-    $('.comment-text[title!=""]').hint();
-     $($(this).find('div')).remove();
+    $textarea.val('add your comment...');
+    $($(this).find('div')).remove();
     return false;
   });
   $('body').on('submit', '.comment-edit-form', function(e) {
@@ -163,9 +167,7 @@ var updateContent = function(State) {
     var comment_id = $(this).attr('comment-id');
     var $textarea = $(this).find('textarea');
     var text = $textarea.val();
-    console.log($(this).data('clicked'), $(this));
     if ($(this).data('clicked') == "Update") {
-        console.log($(this).attr('value'));
         $.ajax ({
             url: "/ArchiveService.edit_comment",
             type: "POST",
@@ -205,4 +207,5 @@ var updateContent = function(State) {
     }
     return false;
   });
-});
+};
+$(document).ready(docReady());
