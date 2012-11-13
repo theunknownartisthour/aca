@@ -1,24 +1,20 @@
-﻿<!-- autosize and autobuttons for comment boxes -->
-$(function(){
-  $('.comment-text').autosize({append: "\n"});
-});
-$(function(){ 
-  // Place hints in all comment-text textarea elements
-  $(".comment-text").hint({text:"add your comment..."});
-});
+﻿
 
+$(document).ready(function () {
+  var ajaxContentReady = function () {
+    console.log('contentReady');
+    $(".comment-text").hint({text:"add your comment..."});
+    // Fits videos in fluid grid
+    $(".center-stage").fitVids({ customSelector: "object[src^='/']"});
+    // autosize and autobuttons for comment boxes
+    $('.comment-text').autosize({append: "\n"});
+  };
 
-var docReady = function () {
-console.log('docReady');
-  <!-- set temporary width -->
-  var windowWidth = (parseInt($(window).width())) * 0.75;
-  $('#loading-message').css({'width':windowWidth});
-  <!-- Fits videos in fluid grid -->
-  // Target your .container, .wrapper, .post, etc.
-  $(".center-stage").fitVids({ customSelector: "object[src^='/']"});
+  ajaxContentReady();
   // If signed in, append a publish comment button when comment text is clicked.
-  $('.comment-text').focus(function() {
+  $('body').on('focus', '.comment-text', function(e) {
     var form = $(this).parent();
+    console.log('signed in? ', $('#not-signed-in').length)
     if (!form.find('input').length) {
       if ($('#not-signed-in').length) {
         window.location = $('#not-signed-in').attr('href') + '%23' + $(this).attr('id');
@@ -28,7 +24,7 @@ console.log('docReady');
       }
     }
   });
-  $('.comment-text').blur(function() {
+  $('body').on('blur', '.comment-text', function(e) {
     var form = $(this).parent()
     if ($(this).val().trim() == '') {
         // user did not add comment, remove the div with publish comment button
@@ -54,14 +50,20 @@ console.log('docReady');
 var loadAjaxContent = function(target, urlBase, selector) {
     $('#ajax_content').load(urlBase + ' ' + selector, function() {
         $(selector).appendTo(target).siblings().addClass('hidden');
-        $(".center-stage").fitVids({ customSelector: "object[src^='/']"});
-        docReady();
+        ajaxContentReady();
+        console.log('lAC', target,' ', urlBase, 'sel=', selector);
     });
 };
 
+function addslashes( str ) {
+    return (str+'').replace(/([\\"'])/g, "\\$1").replace(/\0/g, "\\0");
+}
 var updateContent = function(State) {
-    var selector = '#' + State.data.urlPath.substring(1);
-    if ($(selector).length) { //content is loaded but hidden
+    // uses the path with cleaned up query string as the selector
+    var selector = ('#' + State.data.urlPath.substring(1).replace(/[?=&%]/g,"-"));
+//    var selector = ('#' + State.data.urlPath.substring(1)).split('?')[0];
+    console.log('url=', State.url,' selector=', selector);
+    if ($(selector).length) { //content is already loaded but hidden
         $(selector).siblings().addClass('hidden');
         $(selector).removeClass('hidden');
     } else {
@@ -71,14 +73,29 @@ var updateContent = function(State) {
 
   // Content update and back/forward button handler
   History.Adapter.bind(window, 'statechange', function() {
+  console.log('HAb');
       updateNav(window.location.pathname);
+  console.log('after editAF ', History.getState());
       updateContent(History.getState());
   });
 
   // navigation link handler
-  $('body').on('click', 'a', function(e) {
+  $('body').on('click', 'a:not([href^="/edit-article-form?"])', function(e) {
+   console.log('Navlink');
       var urlPath = $(this).attr('href');
       var title = $(this).text();
+      History.pushState({urlPath: urlPath}, title, urlPath);
+      return false; // prevents default click action of <a ...>
+  });
+  // edit article
+  $('body').on('click', 'a[href^="/edit-article-form?"]', function(e) {
+      var urlPath = $(this).attr('href');
+      var title = $(this).text();
+//      var selector = '\/edit-article-form\?id\=13006'
+//      var selector = ('#' + urlPath.substring(1)).split('?')[0];
+//    console.log('editAF urlPath=', urlPath, 'sel=', selector, 'title=', title);
+      // use loadAjaxContent instead
+//        loadAjaxContent('#content', urlPath, selector);
       History.pushState({urlPath: urlPath}, title, urlPath);
       return false; // prevents default click action of <a ...>
   });
@@ -206,5 +223,4 @@ var updateContent = function(State) {
     }
     return false;
   });
-};
-$(document).ready(docReady());
+});
