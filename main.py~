@@ -136,6 +136,7 @@ class MainPage(webapp2.RequestHandler):
     elif self.request.path == '/my-articles':
       content = get_articles(user.nickname())
     elif self.request.path == '/about':
+      style = tostring(tree.xpath('//style')[0])
       content = innerHTML('About-the-Art-Crime-Archive.html', 'body')
   
     template_data = {
@@ -205,7 +206,7 @@ class EditArticleForm(webapp2.RequestHandler):
       return self.redirect(users.create_login_url("/"))
 
     self.response.out.write("""
-        <div id="%s-3" class="center-stage">
+        <div id="%s-id-%s" class="center-stage">
           <form action="/publish-it?id=%s" method="post">
             <div>Embed<br /><textarea name="embed-code" rows="6" cols="80">%s</textarea></div>
             <div><input type="hidden"></div>
@@ -218,7 +219,7 @@ class EditArticleForm(webapp2.RequestHandler):
             <input type="submit" name="view" value="Publish"></div>
           </form>
         </div>  
-          """ % (self.request.path[1:], article_id, article.embed, article.title, 
+          """ % (self.request.path[1:], article_id, article_id, article.embed, article.title, 
                  sub('<[^>]*>', '', article.content), article.tags))
 
 app = webapp2.WSGIApplication([('/', MainPage),

@@ -158,7 +158,7 @@ span.comment-relativetime {
 div#create-article textarea {
     width: 75%;
 }
-div#edit-article-from div textarea {
+div[id^=edit-article-form] div textarea {
     width: 75%;
 }
 

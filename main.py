@@ -121,6 +121,7 @@ class TestPage(webapp2.RequestHandler):
 
 class MainPage(webapp2.RequestHandler):
   def get(self):
+    style = ''
     user = users.get_current_user()
     if user:
       greeting = ('<div class="signed-in" nickname="%s"> %s <a class="sign-out" href="%s">(sign out)</a></div>' % (user.nickname(), user.nickname(), users.create_logout_url("/")))
@@ -136,13 +137,16 @@ class MainPage(webapp2.RequestHandler):
     elif self.request.path == '/my-articles':
       content = get_articles(user.nickname())
     elif self.request.path == '/about':
+      tree = html.parse('About-the-Art-Crime-Archive.html')
+      style = tostring(tree.xpath('//style')[0])
       content = innerHTML('About-the-Art-Crime-Archive.html', 'body')
   
     template_data = {
             'content_id': self.request.path[1:],
             'content': content,
             'nickname': nickname,
-            'greeting': greeting
+            'greeting': greeting,
+            'style': style,
             }
 
     path = os.path.join(os.path.dirname(__file__), 'index.html' )
@@ -159,7 +163,8 @@ class CreateArticleForm(webapp2.RequestHandler):
               'user': user.nickname(),
               }
     else:
-      return self.redirect(users.create_login_url("/publish-article-form"))
+#      return self.redirect(users.create_login_url("/publish-article-form"))
+      return self.error(500)
       
     self.response.out.write("""
           <div id="%s" class="center-stage">

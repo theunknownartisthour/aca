@@ -48,7 +48,11 @@ $(document).ready(function () {
   }
 
 var loadAjaxContent = function(target, urlBase, selector) {
-    $('#ajax_content').load(urlBase + ' ' + selector, function() {
+    $('#ajax_content').load(urlBase + ' ' + selector, function(response, status, xhr) {
+        if (status == "error") {
+          var msg = '<div id="' + selector.substring(1) + '">You must <a href="' + $('#not-signed-in').attr('href') + '">Sign in or register</a> to use this feature</div>';
+          $('#ajax_content').html(msg);
+        }
         $(selector).appendTo(target).siblings().addClass('hidden');
         ajaxContentReady();
         console.log('lAC', target,' ', urlBase, 'sel=', selector);
@@ -96,6 +100,7 @@ var updateContent = function(State) {
 //    console.log('editAF urlPath=', urlPath, 'sel=', selector, 'title=', title);
       // use loadAjaxContent instead
 //        loadAjaxContent('#content', urlPath, selector);
+      updateNav('/my-articles');
       History.pushState({urlPath: urlPath}, title, urlPath);
       return false; // prevents default click action of <a ...>
   });

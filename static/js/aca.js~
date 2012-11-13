@@ -48,11 +48,16 @@ $(document).ready(function () {
   }
 
 var loadAjaxContent = function(target, urlBase, selector) {
-    $('#ajax_content').load(urlBase + ' ' + selector, function() {
+    $('#ajax_content').load(urlBase + ' ' + selector, function(response, status, xhr) {
+        if (status == "error") {
+          var msg = '<div id="' + selector.substring(1) + '">You must <a href="' + $('#not-signed-in').attr('href') + '">Sign in or register</a> to use this feature</div>';
+         
+          $('#ajax_content').html(msg);
+          console.log(msg + xhr.status + " " + xhr.statusText);
+        }
         $(selector).appendTo(target).siblings().addClass('hidden');
         ajaxContentReady();
         console.log('lAC', target,' ', urlBase, 'sel=', selector);
-//        docReady();
     });
 };
 
@@ -92,11 +97,12 @@ var updateContent = function(State) {
   $('body').on('click', 'a[href^="/edit-article-form?"]', function(e) {
       var urlPath = $(this).attr('href');
       var title = $(this).text();
-      var selector = '\/edit-article-form\?id\=13006'
+//      var selector = '\/edit-article-form\?id\=13006'
 //      var selector = ('#' + urlPath.substring(1)).split('?')[0];
-    console.log('editAF urlPath=', urlPath, 'sel=', selector, 'title=', title);
+//    console.log('editAF urlPath=', urlPath, 'sel=', selector, 'title=', title);
       // use loadAjaxContent instead
 //        loadAjaxContent('#content', urlPath, selector);
+      updateNav('/my-articles');
       History.pushState({urlPath: urlPath}, title, urlPath);
       return false; // prevents default click action of <a ...>
   });
