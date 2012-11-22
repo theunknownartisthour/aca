@@ -51,9 +51,7 @@ var loadAjaxContent = function(target, urlBase, selector) {
     $('#ajax_content').load(urlBase + ' ' + selector, function(response, status, xhr) {
         if (status == "error") {
           var msg = '<div id="' + selector.substring(1) + '">You must <a href="' + $('#not-signed-in').attr('href') + '">Sign in or register</a> to use this feature</div>';
-         
           $('#ajax_content').html(msg);
-          console.log(msg + xhr.status + " " + xhr.statusText);
         }
         $(selector).appendTo(target).siblings().addClass('hidden');
         ajaxContentReady();
@@ -86,7 +84,7 @@ var updateContent = function(State) {
   });
 
   // navigation link handler
-  $('body').on('click', 'a:not([href^="/edit-article-form?"])', function(e) {
+  $('body').on('click', 'a:not([href^="/edit-article-form?"],  )', function(e) {
    console.log('Navlink');
       var urlPath = $(this).attr('href');
       var title = $(this).text();

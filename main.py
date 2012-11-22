@@ -86,14 +86,14 @@ def get_articles(author=None):
                            "FROM Articles "
                            "WHERE ANCESTOR IS :key "
                            "AND view = 'Publish' "
-                           "ORDER BY date DESC LIMIT 20",
+                           "ORDER BY date DESC LIMIT 50",
                            key=archive_key())
   else:
     articles = db.GqlQuery("SELECT * "
                            "FROM Articles "
                            "WHERE ANCESTOR IS :key "
                            "AND author = :by_author "
-                           "ORDER BY date DESC LIMIT 20",
+                           "ORDER BY date DESC LIMIT 50",
                            key=archive_key(), by_author = author)
 
   all_articles =''
@@ -135,7 +135,14 @@ class MainPage(webapp2.RequestHandler):
     if self.request.path == '/the-archive':
       content = get_articles()
     elif self.request.path == '/my-articles':
-      content = get_articles(user.nickname())
+      if user:
+        content = get_articles(user.nickname())
+      else:
+        if 'X-Requested-With' in self.request.headers:
+          return self.error(500)
+        else:
+          return self.redirect(users.create_login_url("/my-articles"))
+        
     elif self.request.path == '/about':
       tree = html.parse('About-the-Art-Crime-Archive.html')
       style = tostring(tree.xpath('//style')[0])
@@ -163,8 +170,10 @@ class CreateArticleForm(webapp2.RequestHandler):
               'user': user.nickname(),
               }
     else:
-#      return self.redirect(users.create_login_url("/publish-article-form"))
-      return self.error(500)
+      if 'X-Requested-With' in self.request.headers:
+        return self.error(500)
+      else:
+        return self.redirect(users.create_login_url("/create-article"))
       
     self.response.out.write("""
           <div id="%s" class="center-stage">

@@ -2,6 +2,11 @@
 body{
   background-color: white;  
  }
+ 
+.version-info {
+  float: right;
+  color: #666;
+}
 .navbar-mod{
   margin: 0px;
 } 
@@ -14,7 +19,7 @@ body{
   margin-bottom: 5px;
   margin-left: 15px;
   overflow: hidden;
-    clear: both;
+  clear: both;
 }
 .user-access {
   float: right;
@@ -158,7 +163,7 @@ span.comment-relativetime {
 div#create-article textarea {
     width: 75%;
 }
-div#cre-article textarea {
+div[id^=edit-article-form] div textarea {
     width: 75%;
 }
 

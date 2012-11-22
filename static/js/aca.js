@@ -84,7 +84,7 @@ var updateContent = function(State) {
   });
 
   // navigation link handler
-  $('body').on('click', 'a:not([href^="/edit-article-form?"])', function(e) {
+  $('body').on('click', 'a:not([href^="/edit-article-form?"], .btn)', function(e) {
    console.log('Navlink');
       var urlPath = $(this).attr('href');
       var title = $(this).text();

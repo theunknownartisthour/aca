@@ -2,6 +2,12 @@
 body{
   background-color: white;  
  }
+ 
+.version-info {
+  float: right;
+  color: #666;
+
+}
 .navbar-mod{
   margin: 0px;
 } 
