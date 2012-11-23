@@ -3,6 +3,7 @@ from protorpc import message_types
 from protorpc import remote
 from pickle import dumps, loads
 from datetime import datetime
+from dateutil import parser
 
 import main
 
@@ -13,6 +14,17 @@ class Article(messages.Message):
     tags = messages.StringField(4)
     view = messages.StringField(5)
     id = messages.IntegerField(6)
+    author = messages.StringField(7)
+    comments = messages.StringField(8)
+    date = messages.StringField(9)
+    limit = messages.IntegerField(10, default=10)
+	
+class Articles(messages.Message):
+    next = messages.StringField(1)
+    articles = messages.MessageField(Article, 2, repeated=True)
+	
+class GetArticlesRequest(messages.Message):
+    limit = messages.IntegerField(1, default=20)
 
 class Comment(messages.Message):
     article_id = messages.IntegerField(1, required=True)
@@ -36,6 +48,29 @@ class ErrorInfo(messages.Message):
     error_info = messages.StringField(2)
     
 class ArchiveService(remote.Service):
+    # Add the remote decorator to indicate the service methods
+    @remote.method(Article, Articles)
+    def get_articles_by_date(self, request):
+		next = None
+		bookmark = request.date
+		
+		if bookmark:
+			some_articles = main.Articles(parent=main.archive_key()).all().order("-date").filter('date <=', parser.parse(bookmark)).fetch(request.limit + 1)
+		else:
+			some_articles = main.Articles(parent=main.archive_key()).all().order("-date").fetch(request.limit + 1)
+		if len(some_articles) == request.limit + 1:
+			next = str(some_articles[-1].date)
+		some_articles = some_articles[:request.limit]
+		articles = []
+		for article in some_articles:
+			articles.append(Article(id = article.key().id(),
+						 embed = article.embed,
+						 date = str(article.date),
+						 title = article.title))
+
+		return Articles(articles=articles,
+						next=next)
+	
     # Add the remote decorator to indicate the service methods
     @remote.method(Article, message_types.VoidMessage)
     def post_article(self, request):
