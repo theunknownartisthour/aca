@@ -15,6 +15,7 @@ from google.appengine.ext.webapp import template
 from google.appengine.api import urlfetch, users
 from google.appengine.ext import db
 from datetime import datetime, timedelta
+from dateutil import parser
 from random import randint
 from re import sub
 from lxml import etree, html
@@ -79,22 +80,24 @@ def format_comments(comments=None, article_id=None):
   all_comments += '</tbody></table></div>'
   return all_comments
   
-def get_articles(author=None):
+def get_articles(author=None, limit=None, bookmark=None):
   """Retrieves articles from Archive entity and composes HTML."""
-  if author is None:
-    articles = db.GqlQuery("SELECT * "
-                           "FROM Articles "
-                           "WHERE ANCESTOR IS :key "
-                           "AND view = 'Publish' "
-                           "ORDER BY date DESC LIMIT 20",
-                           key=archive_key())
+  if not limit:
+    limit = 10
+  articles = Articles().all().order("-date")
+
+  if author:
+    articles = articles.filter('author =', author)
+
+  next = None
+  if bookmark:
+    articles = articles.filter('date <=', parser.parse(bookmark)).fetch(limit + 1)
   else:
-    articles = db.GqlQuery("SELECT * "
-                           "FROM Articles "
-                           "WHERE ANCESTOR IS :key "
-                           "AND author = :by_author "
-                           "ORDER BY date DESC LIMIT 20",
-                           key=archive_key(), by_author = author)
+    articles = articles.fetch(limit + 1)
+    
+  if len(articles) == limit + 1:
+    next = str(articles[-1].date)
+  articles = articles[:limit]
 
   all_articles =''
 
@@ -113,6 +116,11 @@ def get_articles(author=None):
     all_articles += '<div class="below-video article"><pre>%s</pre></div>' % article.content
     all_articles += '<div class="below-video tags">Tags: %s</div>' % article.tags
     all_articles += format_comments(article.comments, article.key().id())
+  if next:
+#    next_link = '<a class="links" href="?bookmark=%s">More Articles...</a>' % next
+    all_articles += '<div class="below-video" id="bookmark" data-bookmark="%s" ></div>' % next
+  else:
+   all_articles += '<div class="below-video" id="bookmark-end">No more articles.</div>'
   return all_articles
 
 class TestPage(webapp2.RequestHandler):
@@ -130,14 +138,28 @@ class MainPage(webapp2.RequestHandler):
       greeting = ('<a id="not-signed-in" class="sign-in" href="%s">Sign in or register</a>' % users.create_login_url("/"))
       nickname = ''
 
+    content_id =  self.request.path[1:]
+    content = 'No content for this URL'
+     
     if self.request.path == '/':
       return self.redirect('/the-archive')
-    if self.request.path == '/the-archive':
-      content = get_articles()
-    elif self.request.path == '/my-articles':
+    if self.request.path[:12] == '/the-archive':
+      content = get_articles(limit = self.request.get('limit'),
+                             bookmark = self.request.get('bookmark'))
+      if self.request.get('bookmark'):
+        content_id =  self.request.path[1:] + '-next'
+    elif self.request.path == '/test':
+	  content = ''
+    elif self.request.path[:12] == '/my-articles':
       if user:
-        content = get_articles(user.nickname())
+        content = get_articles(author = user.nickname(),
+                               limit = self.request.get('limit'),
+                               bookmark = self.request.get('bookmark'))
       else:
+        if 'X-Requested-With' in self.request.headers:
+          return self.error(500)
+        else:
+          return self.redirect(users.create_login_url("/my-articles"))
         
     elif self.request.path == '/about':
       tree = html.parse('About-the-Art-Crime-Archive.html')
@@ -145,7 +167,7 @@ class MainPage(webapp2.RequestHandler):
       content = innerHTML('About-the-Art-Crime-Archive.html', 'body')
   
     template_data = {
-            'content_id': self.request.path[1:],
+            'content_id': content_id,
             'content': content,
             'nickname': nickname,
             'greeting': greeting,
@@ -169,7 +191,7 @@ class CreateArticleForm(webapp2.RequestHandler):
       if 'X-Requested-With' in self.request.headers:
         return self.error(500)
       else:
-        return self.redirect(users.create_login_url("/publish-article-form"))
+        return self.redirect(users.create_login_url("/create-article"))
       
     self.response.out.write("""
           <div id="%s" class="center-stage">
@@ -233,9 +255,11 @@ class EditArticleForm(webapp2.RequestHandler):
 
 app = webapp2.WSGIApplication([('/', MainPage),
                                ('/the-archive', MainPage), 
+                               ('/the-archive-next', MainPage), 
                                ('/my-articles', MainPage), 
-                               ('/about', MainPage),                               
+                               ('/my-articles-next', MainPage), 
                                ('/create-article', CreateArticleForm),
                                ('/edit-article-form', EditArticleForm),
+                               ('/test', MainPage),
                                ('/publish-it', PublishArticle)],
                                 debug=True)

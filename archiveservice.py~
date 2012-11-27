@@ -3,6 +3,7 @@ from protorpc import message_types
 from protorpc import remote
 from pickle import dumps, loads
 from datetime import datetime
+from dateutil import parser
 
 import main
 
@@ -54,7 +55,7 @@ class ArchiveService(remote.Service):
 		bookmark = request.date
 		
 		if bookmark:
-			some_articles = main.Articles(parent=main.archive_key()).all().order("-date").filter('date >', "2012-10-21 19:28:57.700860").fetch(request.limit + 1)
+			some_articles = main.Articles(parent=main.archive_key()).all().order("-date").filter('date <=', parser.parse(bookmark)).fetch(request.limit + 1)
 		else:
 			some_articles = main.Articles(parent=main.archive_key()).all().order("-date").fetch(request.limit + 1)
 		if len(some_articles) == request.limit + 1:
@@ -63,10 +64,19 @@ class ArchiveService(remote.Service):
 		articles = []
 		for article in some_articles:
 			articles.append(Article(id = article.key().id(),
-						 embed = article.embed,
-						 date = str(article.date),
-						 title = article.title))
+										 embed = article.embed,
+										 title = article.title,
+										 view = article.view,
+										 content = article.content,
+										 tags = article.tags,
+										 date = str(article.date)))
 
+    content = messages.StringField(3)
+    tags = messages.StringField(4)
+    view = messages.StringField(5)
+    id = messages.IntegerField(6)
+    author = messages.StringField(7)
+    comments = messages.StringField(8)
 		return Articles(articles=articles,
 						next=next)
 	

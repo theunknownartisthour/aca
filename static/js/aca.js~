@@ -1,6 +1,38 @@
 ﻿
 
 $(document).ready(function () {
+    $(window).scroll(function() {
+        console.log('scrolling');
+        var totalHeight, currentScroll, visibleHeight;        
+        currentScroll = $(document).scrollTop();
+        totalHeight = document.body.offsetHeight;
+        visibleHeight = document.documentElement.clientHeight;
+        if (visibleHeight + currentScroll + 10 >= totalHeight) {
+              // get more content when user scrolls to bottom
+              console.log('end?=', $('#bookmark-end').length);
+            if (window.location.pathname == '/the-archive' && $('#bookmark-end').length == 0) {
+              console.log('get more articles');
+              loadAjaxContent('#content', 'http://localhost:8087/the-archive?bookmark=2012-10-24%2004:29:24.280980', '#the-archive-next');
+// lAC target = #content   sel= #the-archive 
+            }
+            console.log('scrolled to end');
+        }
+    });
+    $.ajax ({
+        url: "/ArchiveService.get_articles_by_date",
+        type: "POST",
+        data: JSON.stringify({}),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function(data) {
+            // copy hidden comment row before modifying with new comment
+			console.log('get_articles_by_date: ', data.articles);
+			for (var article in data.articles) {
+				$('#test').append(data.articles[article].embed);
+				console.log(data.articles[article].embed);
+			}
+        }
+    });
   var ajaxContentReady = function () {
     console.log('contentReady');
     $(".comment-text").hint({text:"add your comment..."});
@@ -54,6 +86,10 @@ var loadAjaxContent = function(target, urlBase, selector) {
           $('#ajax_content').html(msg);
         }
         $(selector).appendTo(target).siblings().addClass('hidden');
+        console.log('[id^="' + selector + '"]', '-next?=', selector.match("-next$") == '-next');
+        if (selector.match("-next$") == '-next') {
+//            $('[id^="' + selector + '"]').removeClass('hidden);
+        }
         ajaxContentReady();
         console.log('lAC', target,' ', urlBase, 'sel=', selector);
     });
@@ -84,7 +120,7 @@ var updateContent = function(State) {
   });
 
   // navigation link handler
-  $('body').on('click', 'a:not([href^="/edit-article-form?"],  )', function(e) {
+  $('body').on('click', 'a:not([href^="/edit-article-form?"], .btn)', function(e) {
    console.log('Navlink');
       var urlPath = $(this).attr('href');
       var title = $(this).text();

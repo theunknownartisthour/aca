@@ -55,18 +55,22 @@ class ArchiveService(remote.Service):
 		bookmark = request.date
 		
 		if bookmark:
-			some_articles = main.Articles(parent=main.archive_key()).all().order("-date").filter('date <=', parser.parse(bookmark)).fetch(request.limit + 1)
+			some_articles = main.Articles().all().order("-date").filter('date <=', parser.parse(bookmark)).fetch(request.limit + 1)
 		else:
-			some_articles = main.Articles(parent=main.archive_key()).all().order("-date").fetch(request.limit + 1)
+			some_articles = main.Articles().all().order("-date").fetch(request.limit + 1)
 		if len(some_articles) == request.limit + 1:
 			next = str(some_articles[-1].date)
 		some_articles = some_articles[:request.limit]
 		articles = []
 		for article in some_articles:
 			articles.append(Article(id = article.key().id(),
-						 embed = article.embed,
-						 date = str(article.date),
-						 title = article.title))
+										 embed = article.embed,
+										 title = article.title,
+										 author = article.author,
+										 view = article.view,
+										 content = article.content,
+										 tags = article.tags,
+										 date = str(article.date)))
 
 		return Articles(articles=articles,
 						next=next)
