@@ -1,6 +1,7 @@
 ﻿
 
 $(document).ready(function () {
+    // automatically get and show more content when user scrolls to end of page
     $(window).scroll(function() {
         console.log('scrolling');
         var totalHeight, currentScroll, visibleHeight;        
@@ -10,9 +11,9 @@ $(document).ready(function () {
         if (visibleHeight + currentScroll + 10 >= totalHeight) {
               // get more content when user scrolls to bottom
               console.log('end?=', $('#bookmark-end').length);
-            if (window.location.pathname == '/the-archive' && $('#bookmark-end').length == 0) {
-              console.log('get more articles');
-              loadAjaxContent('#content', 'http://localhost:8087/the-archive?bookmark=2012-10-24%2004:29:24.280980', '#the-archive-next');
+            if (window.location.pathname == '/the-archive' && $('div[id^="the-archive"] > .bookmark-end').length == 0) {
+              var url =   window.location.href + '?bookmark=' + encodeURIComponent($('.bookmark:last').attr('data-bookmark'));
+              loadAjaxContent('#content', url, '#the-archive-next');
 // lAC target = #content   sel= #the-archive 
             }
             console.log('scrolled to end');
@@ -43,6 +44,7 @@ $(document).ready(function () {
   };
 
   ajaxContentReady();
+
   // If signed in, append a publish comment button when comment text is clicked.
   $('body').on('focus', '.comment-text', function(e) {
     var form = $(this).parent();
@@ -82,13 +84,15 @@ $(document).ready(function () {
 var loadAjaxContent = function(target, urlBase, selector) {
     $('#ajax_content').load(urlBase + ' ' + selector, function(response, status, xhr) {
         if (status == "error") {
-          var msg = '<div id="' + selector.substring(1) + '">You must <a href="' + $('#not-signed-in').attr('href') + '">Sign in or register</a> to use this feature</div>';
+          var msg = '<div id="' + selector.slice(1) + '">You must <a href="' + $('#not-signed-in').attr('href') + '">Sign in or register</a> to use this feature</div>';
           $('#ajax_content').html(msg);
         }
         $(selector).appendTo(target).siblings().addClass('hidden');
-        console.log('[id^="' + selector + '"]', '-next?=', selector.match("-next$") == '-next');
+        console.log('div[id^="' + selector.slice(1, -5) + '"]', '-next?=', selector.match("-next$") == '-next');
         if (selector.match("-next$") == '-next') {
-//            $('[id^="' + selector + '"]').removeClass('hidden);
+            $(selector.slice(0, -5)).removeClass('hidden');
+            $($(selector).contents()).appendTo(selector.slice(0, -5));
+            $(selector).remove();
         }
         ajaxContentReady();
         console.log('lAC', target,' ', urlBase, 'sel=', selector);

@@ -118,9 +118,9 @@ def get_articles(author=None, limit=None, bookmark=None):
     all_articles += format_comments(article.comments, article.key().id())
   if next:
 #    next_link = '<a class="links" href="?bookmark=%s">More Articles...</a>' % next
-    all_articles += '<div class="below-video" id="bookmark" data-bookmark="%s" ></div>' % next
+    all_articles += '<div class="bookmark" data-bookmark="%s" ></div>' % next
   else:
-   all_articles += '<div class="below-video" id="bookmark-end">No more articles.</div>'
+   all_articles += '<div class="bookmark-end">No more articles.</div>'
   return all_articles
 
 class TestPage(webapp2.RequestHandler):
@@ -258,6 +258,7 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/the-archive-next', MainPage), 
                                ('/my-articles', MainPage), 
                                ('/my-articles-next', MainPage), 
+                               ('/about', MainPage), 
                                ('/create-article', CreateArticleForm),
                                ('/edit-article-form', EditArticleForm),
                                ('/test', MainPage),
