@@ -83,7 +83,7 @@ div[class*="side-bar"]{
  .embed{
   margin-top: 0px;
  }
-.title {
+.title, .article-link, .article-link:hover{
   margin: 0px;
   padding-top: 5px;
   color: #000;

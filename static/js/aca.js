@@ -14,6 +14,10 @@ $(document).ready(function () {
             if (window.location.pathname == '/the-archive' && $('div[id^="the-archive"] > .bookmark-end').length == 0) {
               var url =   window.location.href + '?bookmark=' + encodeURIComponent($('.bookmark:last').attr('data-bookmark'));
               loadAjaxContent('#content', url, '#the-archive-next');
+			}
+            if (window.location.pathname == '/recent' && $('div[id^="the-archive"] > .bookmark-end').length == 0) {
+              var url =   window.location.href + '?bookmark=' + encodeURIComponent($('.bookmark:last').attr('data-bookmark'));
+              loadAjaxContent('#content', url, '#recent-next');
 // lAC target = #content   sel= #the-archive 
             }
             console.log('scrolled to end');
@@ -124,7 +128,7 @@ var updateContent = function(State) {
   });
 
   // navigation link handler
-  $('body').on('click', 'a:not([href^="/edit-article-form?"], .btn)', function(e) {
+  $('body').on('click', 'a:not([href^="/edit-article-form?"], .btn, .no-ajax)', function(e) {
    console.log('Navlink');
       var urlPath = $(this).attr('href');
       var title = $(this).text();

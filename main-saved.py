@@ -79,29 +79,11 @@ def format_comments(comments=None, article_id=None):
   all_comments += tostring(tree.xpath('//tr')[3]) #hidden comment tr
   all_comments += '</tbody></table></div>'
   return all_comments
-
-def format_article(article, all_articles):
-    edit_link = ''
-    view_status = ''
-    if str(users.get_current_user()) == article.author:
-      edit_link = '<a class="links" href="/edit-article-form?id=%s">edit</a>' % article.key().id()
-      if article.view != 'Publish':
-         view_status = '<a class="view-status" href="/edit-article-form?id=%s">not published</a>' % (article.key().id())
-    #todo - move to article template file
-    all_articles += '<div class="embed">%s</div>' % article.embed
-    all_articles += '<div class="title"> <a class="article-link no-ajax" href="/article?id=%s">%s</a> ' % (article.key().id(), article.title)
-    all_articles += '<span class="author"> by %s </span>' % article.author.split('@',2)[0]
-    all_articles += '<span> %s %s </span></div>' % (view_status, edit_link)
-    all_articles += '<div class="below-video article"><pre>%s</pre></div>' % article.content
-    all_articles += '<div class="below-video tags">Tags: %s</div>' % article.tags
-    all_articles += format_comments(article.comments, article.key().id())
-    return all_articles
-	
-def get_articles(id=None, author=None, limit=None, bookmark=None):
+  
+def get_articles(author=None, limit=None, bookmark=None):
   """Retrieves articles from Archive entity and composes HTML."""
   if not limit:
     limit = 10
-
   articles = Articles().all().order("-date")
 
   if author:
@@ -118,13 +100,27 @@ def get_articles(id=None, author=None, limit=None, bookmark=None):
   articles = articles[:limit]
 
   all_articles =''
-  for article in articles:
-    all_articles = format_article(article, all_articles)
 
+  for article in articles:
+    edit_link = ''
+    view_status = ''
+    if str(users.get_current_user()) == article.author:
+      edit_link = '<a class="links" href="/edit-article-form?id=%s">edit</a>' % article.key().id()
+      if article.view != 'Publish':
+         view_status = '<a class="view-status" href="/edit-article-form?id=%s">not published</a>' % (article.key().id())
+    #todo - move to article template file
+    all_articles += '<div class="embed">%s</div>' % article.embed
+    all_articles += '<div class="title"> %s ' % article.title
+    all_articles += '<span class="author"> by %s </span>' % article.author.split('@',2)[0]
+    all_articles += '<span> %s %s </span></div>' % (view_status, edit_link)
+    all_articles += '<div class="below-video article"><pre>%s</pre></div>' % article.content
+    all_articles += '<div class="below-video tags">Tags: %s</div>' % article.tags
+    all_articles += format_comments(article.comments, article.key().id())
   if next:
+#    next_link = '<a class="links" href="?bookmark=%s">More Articles...</a>' % next
     all_articles += '<div class="bookmark" data-bookmark="%s" ></div>' % next
   else:
-    all_articles += '<div class="bookmark-end">No more articles.</div>'
+   all_articles += '<div class="bookmark-end">No more articles.</div>'
   return all_articles
 
 class TestPage(webapp2.RequestHandler):
@@ -151,14 +147,12 @@ class MainPage(webapp2.RequestHandler):
     if self.request.path == '/':
       return self.redirect('/the-archive')
       
-    if self.request.path == '/article':
-      content = format_article(Articles().get_by_id(int(self.request.get('id')), parent=archive_key()), '')
-	
-    if self.request.path[:12] == '/curated':
-      for id in open('archive-list.txt', 'r').read().split():
-	    content += format_article(Articles().get_by_id(int(id), parent=archive_key()), '')
-                             
     if self.request.path[:12] == '/the-archive':
+      open('archive-list.txt', 'r').read().split()
+      content = get_articles(limit = self.request.get('limit'),
+                             bookmark = self.request.get('bookmark'))
+                             
+    if self.request.path[:12] == '/recent':
       content = get_articles(limit = self.request.get('limit'),
                              bookmark = self.request.get('bookmark'))
                              
@@ -268,12 +262,10 @@ class EditArticleForm(webapp2.RequestHandler):
                  sub('<[^>]*>', '', article.content), article.tags))
 
 app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/article', MainPage), 
-                               ('/curated', MainPage), 
                                ('/the-archive', MainPage), 
                                ('/the-archive-next', MainPage), 
-                               ('/recent', MainPage), 
-                               ('/recent-next', MainPage), 
+                               ('/curated', MainPage), 
+                               ('/curated-next', MainPage), 
                                ('/my-articles', MainPage), 
                                ('/my-articles-next', MainPage), 
                                ('/about', MainPage), 
