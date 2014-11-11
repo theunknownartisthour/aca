@@ -154,11 +154,11 @@ class MainPage(webapp2.RequestHandler):
     if self.request.path == '/article':
       content = format_article(Articles().get_by_id(int(self.request.get('id')), parent=archive_key()), '')
 	
-    if self.request.path[:12] == '/curated':
-      for id in open('archive-list.txt', 'r').read().split():
-	    content += format_article(Articles().get_by_id(int(id), parent=archive_key()), '')
-                             
     if self.request.path[:12] == '/the-archive':
+      for id in open('archive-list.txt', 'r').read().split():
+	    content += format_article(Articles().get_by_id(id, parent=archive_key()), '')
+                             
+    if self.request.path[:12] == '/recent':
       content = get_articles(limit = self.request.get('limit'),
                              bookmark = self.request.get('bookmark'))
                              
@@ -269,7 +269,6 @@ class EditArticleForm(webapp2.RequestHandler):
 
 app = webapp2.WSGIApplication([('/', MainPage),
                                ('/article', MainPage), 
-                               ('/curated', MainPage), 
                                ('/the-archive', MainPage), 
                                ('/the-archive-next', MainPage), 
                                ('/recent', MainPage), 
