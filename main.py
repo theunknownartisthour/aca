@@ -22,6 +22,133 @@ from lxml import etree, html
 from lxml.html import tostring, fragment_fromstring
 from pickle import dumps, loads
 
+from authomatic import Authomatic
+from authomatic.adapters import Webapp2Adapter
+
+class Login(webapp2.RequestHandler):
+    
+    # The handler must accept GET and POST http methods and
+    # Accept any HTTP method and catch the "provider_name" URL variable.
+    def any(self, provider_name):
+                
+        # It all begins with login.
+        result = authomatic.login(Webapp2Adapter(self), provider_name)
+        
+        # Do not write anything to the response if there is no result!
+        if result:
+            # If there is result, the login procedure is over and we can write to response.
+            self.response.write('<a href="..">Home</a>')
+            
+            if result.error:
+                # Login procedure finished with an error.
+                self.response.write(u'<h2>Error!: {}</h2>'.format(result.error.message))
+            
+            elif result.user:
+                # Hooray, we have the user!
+                
+                # OAuth 2.0 and OAuth 1.0a provide only limited user data on login,
+                # We need to update the user to get more info.
+                if not (result.user.name and result.user.id):
+                    result.user.update()
+                
+                # Welcome the user.
+                self.response.write(u'<h1>Hi {}</h1>'.format(result.user.name))
+                self.response.write(u'<h2>Your id is: {}</h2>'.format(result.user.id))
+                self.response.write(u'<h2>Your email is: {}</h2>'.format(result.user.email))
+                
+                # Seems like we're done, but there's more we can do...
+                
+                # If there are credentials (only by AuthorizationProvider),
+                # we can _access user's protected resources.
+                if result.user.credentials:
+                    
+                    # Each provider has it's specific API.
+                    if result.provider.name == 'fb':
+                        self.response.write('Your are logged in with Facebook.<br />')
+                        
+                        # We will access the user's 5 most recent statuses.
+                        url = 'https://graph.facebook.com/{}?fields=feed.limit(5)'
+                        url = url.format(result.user.id)
+                        
+                        # Access user's protected resource.
+                        response = result.provider.access(url)
+                        
+                        if response.status == 200:
+                            # Parse response.
+                            statuses = response.data.get('feed').get('data')
+                            error = response.data.get('error')
+                            
+                            if error:
+                                self.response.write(u'Error!: {}!'.format(error))
+                            elif statuses:
+                                self.response.write('Your 5 most recent statuses:<br />')
+                                for message in statuses:
+                                    
+                                    text = message.get('message')
+                                    date = message.get('created_time')
+                                    
+                                    self.response.write(u'<h3>{}</h3>'.format(text))
+                                    self.response.write(u'Posted on: {}'.format(date))
+                        else:
+                            self.response.write('Unknown Error!<br />')
+                            self.response.write(u'Status: {}'.format(response.status))
+                        
+                    if result.provider.name == 'tw':
+                        self.response.write('Your are logged in with Twitter.<br />')
+                        
+                        # We will get the user's 5 most recent tweets.
+                        url = 'https://api.twitter.com/1.1/statuses/user_timeline.json'
+                        
+                        # You can pass a dictionary of querystring parameters.
+                        response = result.provider.access(url, {'count': 5})
+                                                
+                        # Parse response.
+                        if response.status == 200:
+                            if type(response.data) is list:
+                                # Twitter returns the tweets as a JSON list.
+                                self.response.write('Your 5 most recent tweets:')
+                                for tweet in response.data:
+                                    text = tweet.get('text')
+                                    date = tweet.get('created_at')
+                                    
+                                    self.response.write(u'<h3>{}</h3>'.format(text.replace(u'\u2013', '[???]')))
+                                    self.response.write(u'Tweeted on: {}'.format(date))
+                                    
+                            elif response.data.get('errors'):
+                                self.response.write(u'Error!: {}!'.\
+                                                    format(response.data.get('errors')))
+                        else:
+                            self.response.write('Unknown Error!<br />')
+                            self.response.write(u'Status: {}'.format(response.status))
+
+#Use flow object to replace login procedure
+#from oauth2client.client import OAuth2WebServerFlow
+
+providers = {
+    'Google'   : 'https://www.google.com/accounts/o8/id',
+    'Yahoo'    : 'yahoo.com',
+    'MySpace'  : 'myspace.com',
+    'AOL'      : 'aol.com',
+    'MyOpenID' : 'myopenid.com'
+    # add more here
+}
+
+#Steps to using oauth2, 	
+#authorize_url = FLOW.step1_get_authorize_url()
+#self.redirect(authorize_url)
+#credentials = flow.step2_exchange(self.request.params)
+#storage = StorageByKeyName(Credentials, user.user_id(), 'credentials')
+#storage.put(credentials)
+
+#class oAuthenticate():
+#	def get(self):
+		#Create a static flow object here
+#		flow = OAuth2WebServerFlow(client_id='your_client_id',
+#			client_secret='your_client_secret',
+#			scope='https://...../auth/something',
+#			redirect_uri='https://someurlyouown/auth_return')
+#		self.redirect(flow.step1_get_authorize_url())
+
 class Articles(db.Model):
   """Models an individual Archive entry"""
   author = db.StringProperty()
@@ -139,7 +266,10 @@ class MainPage(webapp2.RequestHandler):
       greeting = ('<div class="signed-in" nickname="%s"> %s <a class="sign-out" href="%s">(sign out)</a></div>' % (user.nickname(), user.nickname(), users.create_logout_url("/")))
       nickname = user.nickname()
     else:
-      greeting = ('<a id="not-signed-in" class="sign-in" href="%s">Sign in or register</a>' % users.create_login_url("/"))
+      greeting = 'Sign in with: <a id="not-signed-in" class="sign-in" href="/auth">Login</a>'
+      #for name, uri in providers.items():
+        #greeting += ('<a id="not-signed-in" class="sign-in" href="%s"> %s</a>' % (users.create_login_url(federated_identity=uri), name))
+		#greeting = ('<a id="not-signed-in" class="sign-in" href="%s">Sign in or register</a>' % users.create_login_url("/"))
       nickname = ''
 
     content = 'No content for this URL'
@@ -179,6 +309,9 @@ class MainPage(webapp2.RequestHandler):
       tree = html.parse('About-the-Art-Crime-Archive.html')
       style = tostring(tree.xpath('//style')[0])
       content = innerHTML('About-the-Art-Crime-Archive.html', 'body')
+	  
+    elif self.request.path == '/auth':
+      content = innerHTML('loginforms.html', 'body')
   
     template_data = {
             'content_id': content_id,
@@ -279,5 +412,7 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/create-article', CreateArticleForm),
                                ('/edit-article-form', EditArticleForm),
                                ('/test', MainPage),
-                               ('/publish-it', PublishArticle)],
+							   ('/auth', MainPage),
+                               ('/publish-it', PublishArticle),
+							   webapp2.Route(r'/login/<:.*>', Login, handler_method='any')],
                                 debug=True)
