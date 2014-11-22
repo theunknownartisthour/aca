@@ -24,6 +24,9 @@ from pickle import dumps, loads
 
 from authomatic import Authomatic
 from authomatic.adapters import Webapp2Adapter
+from config import CONFIG
+
+authomatic = Authomatic(config=CONFIG, secret='some random secret string')
 
 class Login(webapp2.RequestHandler):
     
