@@ -11,6 +11,7 @@
 
 from protorpc.wsgi import service
 import webapp2, os, json
+from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 from google.appengine.api import urlfetch, users
 from google.appengine.ext import db
@@ -419,3 +420,34 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/publish-it', PublishArticle),
 							   webapp2.Route(r'/login/<:.*>', Login, handler_method='any')],
                                 debug=True)
+
+								
+''' 
+create a new Secret entity in the dataStore for each provider if one does not
+already exist. New providers must have their Secret entities updated manually
+using the edit entity feature of the App Engine developer console
+'''
+
+class Secret(ndb.Model):
+    """Models an individual Secret entry."""
+    provider = ndb.StringProperty()
+    consumer_key = ndb.StringProperty()
+    consumer_secret = ndb.StringProperty()
+
+def newSecret(provider):
+    return Secret(parent=key, provider=provider, consumer_key='k', consumer_secret='s')
+
+key = ndb.Key('Secrets', 'client_secrets')
+secrets_query = Secret.query(ancestor=key)
+secrets = secrets_query.fetch()
+storedProviders = {s.provider: {'consumer_key':s.consumer_key, 'consumer_secret':s.consumer_secret} for s in secrets}
+
+ndb.put_multi(newSecret(p) for p in CONFIG if p not in storedProviders)
+
+#update CONFIG with stored secrets
+for provider in CONFIG:
+    try:
+        CONFIG[provider]['consumer_key'] = storedProviders[provider]['consumer_key']
+        CONFIG[provider]['consumer_secret'] = storedProviders[provider]['consumer_secret']
+    except KeyError:
+        logging.info("The secrets for new provider %s may not have been updated", provider)
