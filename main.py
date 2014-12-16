@@ -10,7 +10,7 @@
 # check user before allowing edit of form.
 
 from protorpc.wsgi import service
-import webapp2, os, json
+import webapp2, os, json, logging, urllib
 from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 from google.appengine.api import urlfetch, users
@@ -40,118 +40,43 @@ class Login(webapp2.RequestHandler):
         
         # Do not write anything to the response if there is no result!
         if result:
-            # If there is result, the login procedure is over and we can write to response.
-            self.response.write('<a href="..">Home</a>')
-            
-            if result.error:
-                # Login procedure finished with an error.
-                self.response.write(u'<h2>Error!: {}</h2>'.format(result.error.message))
-            
-            elif result.user:
-                # Hooray, we have the user!
+            if result.user:
+                result.user.update()
+                self.response.write('<h1>Hi {0}</h1>'.format(result.user.name))
                 
-                # OAuth 2.0 and OAuth 1.0a provide only limited user data on login,
-                # We need to update the user to get more info.
-                if not (result.user.name and result.user.id):
-                    result.user.update()
+                # Save the user name and ID to cookies that we can use it in other handlers.
+                self.response.set_cookie('user_id', result.user.id)
+                self.response.set_cookie('user_name', urllib.quote(result.user.name))
+                self.response.set_cookie('user_email', result.user.email)
                 
-                # Welcome the user.
-                self.response.write(u'<h1>Hi {}</h1>'.format(result.user.name))
-                self.response.write(u'<h2>Your id is: {}</h2>'.format(result.user.id))
-                self.response.write(u'<h2>Your email is: {}</h2>'.format(result.user.email))
-                
-                # Seems like we're done, but there's more we can do...
-                
-                # If there are credentials (only by AuthorizationProvider),
-                # we can _access user's protected resources.
                 if result.user.credentials:
+                    # Serialize credentials and store it as well.
+                    serialized_credentials = result.user.credentials.serialize()
+                    self.response.set_cookie('credentials', serialized_credentials)
                     
-                    # Each provider has it's specific API.
-                    if result.provider.name == 'fb':
-                        self.response.write('Your are logged in with Facebook.<br />')
-                        
-                        # We will access the user's 5 most recent statuses.
-                        url = 'https://graph.facebook.com/{}?fields=feed.limit(5)'
-                        url = url.format(result.user.id)
-                        
-                        # Access user's protected resource.
-                        response = result.provider.access(url)
-                        
-                        if response.status == 200:
-                            # Parse response.
-                            statuses = response.data.get('feed').get('data')
-                            error = response.data.get('error')
-                            
-                            if error:
-                                self.response.write(u'Error!: {}!'.format(error))
-                            elif statuses:
-                                self.response.write('Your 5 most recent statuses:<br />')
-                                for message in statuses:
-                                    
-                                    text = message.get('message')
-                                    date = message.get('created_time')
-                                    
-                                    self.response.write(u'<h3>{}</h3>'.format(text))
-                                    self.response.write(u'Posted on: {}'.format(date))
-                        else:
-                            self.response.write('Unknown Error!<br />')
-                            self.response.write(u'Status: {}'.format(response.status))
-                        
-                    if result.provider.name == 'tw':
-                        self.response.write('Your are logged in with Twitter.<br />')
-                        
-                        # We will get the user's 5 most recent tweets.
-                        url = 'https://api.twitter.com/1.1/statuses/user_timeline.json'
-                        
-                        # You can pass a dictionary of querystring parameters.
-                        response = result.provider.access(url, {'count': 5})
-                                                
-                        # Parse response.
-                        if response.status == 200:
-                            if type(response.data) is list:
-                                # Twitter returns the tweets as a JSON list.
-                                self.response.write('Your 5 most recent tweets:')
-                                for tweet in response.data:
-                                    text = tweet.get('text')
-                                    date = tweet.get('created_at')
-                                    
-                                    self.response.write(u'<h3>{}</h3>'.format(text.replace(u'\u2013', '[???]')))
-                                    self.response.write(u'Tweeted on: {}'.format(date))
-                                    
-                            elif response.data.get('errors'):
-                                self.response.write(u'Error!: {}!'.\
-                                                    format(response.data.get('errors')))
-                        else:
-                            self.response.write('Unknown Error!<br />')
-                            self.response.write(u'Status: {}'.format(response.status))
+            elif result.error:
+                self.response.set_cookie('error', urllib.quote(result.error.message))
+            
+            self.redirect('/')
 
-#Use flow object to replace login procedure
-#from oauth2client.client import OAuth2WebServerFlow
 
-providers = {
-    'Google'   : 'https://www.google.com/accounts/o8/id',
-    'Yahoo'    : 'yahoo.com',
-    'MySpace'  : 'myspace.com',
-    'AOL'      : 'aol.com',
-    'MyOpenID' : 'myopenid.com'
-    # add more here
-}
-
-#Steps to using oauth2, 	
-#authorize_url = FLOW.step1_get_authorize_url()
-#self.redirect(authorize_url)
-#credentials = flow.step2_exchange(self.request.params)
-#storage = StorageByKeyName(Credentials, user.user_id(), 'credentials')
-#storage.put(credentials)
-
-#class oAuthenticate():
-#	def get(self):
-		#Create a static flow object here
-#		flow = OAuth2WebServerFlow(client_id='your_client_id',
-#			client_secret='your_client_secret',
-#			scope='https://...../auth/something',
-#			redirect_uri='https://someurlyouown/auth_return')
-#		self.redirect(flow.step1_get_authorize_url())
+class Logout(webapp2.RequestHandler):
+    def get(self):
+        # Delete cookies.
+        self.response.delete_cookie('user_id')
+        self.response.delete_cookie('user_name')
+        self.response.delete_cookie('user_email')
+        self.response.delete_cookie('credentials')
+        self.response.delete_cookie('error')
+        
+        # Redirect home.
+        #self.redirect('./')
+        self.redirect('/auth')
+		
+                # Welcome the user.
+                # self.response.write(u'<h1>Hi {}</h1>'.format(result.user.name))
+                # self.response.write(u'<h2>Your id is: {}</h2>'.format(result.user.id))
+                # self.response.write(u'<h2>Your email is: {}</h2>'.format(result.user.email))
 
 class Articles(db.Model):
   """Models an individual Archive entry"""
@@ -265,15 +190,23 @@ class TestPage(webapp2.RequestHandler):
 class MainPage(webapp2.RequestHandler):
   def get(self):
     style = ''
-    user = users.get_current_user()
-    if user:
-      greeting = ('<div class="signed-in" nickname="%s"> %s <a class="sign-out" href="%s">(sign out)</a></div>' % (user.nickname(), user.nickname(), users.create_logout_url("/")))
-      nickname = user.nickname()
+    #user = users.get_current_user()
+	
+	#Pull user data from cookies
+    serialized_credentials = self.request.cookies.get('credentials')
+    user_id = self.request.cookies.get('user_id')
+    user_name = urllib.unquote(self.request.cookies.get('user_name', ''))
+    error = urllib.unquote(self.request.cookies.get('error', ''))
+	
+    #Checking cookies for login info
+    if error:
+      greeting = 'Sign in with: <a id="not-signed-in" class="sign-in" href="/auth">Login</a>'
+      nickname = ''
+    elif user_id:
+      nickname = user_name
+      greeting = ('<div class="signed-in" nickname="%s"> %s <a class="sign-out" href="%s">(sign out)</a></div>' % (nickname, nickname, "/logout"))
     else:
       greeting = 'Sign in with: <a id="not-signed-in" class="sign-in" href="/auth">Login</a>'
-      #for name, uri in providers.items():
-        #greeting += ('<a id="not-signed-in" class="sign-in" href="%s"> %s</a>' % (users.create_login_url(federated_identity=uri), name))
-		#greeting = ('<a id="not-signed-in" class="sign-in" href="%s">Sign in or register</a>' % users.create_login_url("/"))
       nickname = ''
 
     content = 'No content for this URL'
@@ -288,6 +221,7 @@ class MainPage(webapp2.RequestHandler):
     if self.request.path == '/article':
       content = format_article(Articles().get_by_id(int(self.request.get('id')), parent=archive_key()), '')
 	
+	#Should be dynamic?
     if self.request.path[:12] == '/the-archive':
       for id in open('archive-list.txt', 'r').read().split():
 	    content += format_article(Articles().get_by_id(id, parent=archive_key()), '')
@@ -299,15 +233,15 @@ class MainPage(webapp2.RequestHandler):
     elif self.request.path == '/test':
 	  content = ''
     elif self.request.path[:12] == '/my-articles':
-      if user:
-        content = get_articles(author = user.nickname(),
+      if nickname != '':
+        content = get_articles(author = nickname,
                                limit = self.request.get('limit'),
                                bookmark = self.request.get('bookmark'))
       else:
         if 'X-Requested-With' in self.request.headers:
           return self.error(500)
         else:
-          return self.redirect(users.create_login_url("/my-articles"))
+          return self.redirect('/auth')
         
     elif self.request.path == '/about':
       tree = html.parse('About-the-Art-Crime-Archive.html')
@@ -316,6 +250,19 @@ class MainPage(webapp2.RequestHandler):
 	  
     elif self.request.path == '/auth':
       content = innerHTML('loginforms.html', 'body')
+	
+    elif self.request.path == '/logout':
+      self.response.delete_cookie('user_id')
+      self.response.delete_cookie('user_name')
+      self.response.delete_cookie('user_email')
+      self.response.delete_cookie('credentials')
+      self.response.delete_cookie('error')
+      
+	  #change to logged out look
+      greeting = 'Sign in with: <a id="not-signed-in" class="sign-in" href="/auth">Login</a>'
+      nickname = ''
+      content = '<div>Success! You have signed off, we will log you out when you leave the site</div>'
+      content += innerHTML('loginforms.html', 'body')
   
     template_data = {
             'content_id': content_id,
@@ -331,18 +278,29 @@ class MainPage(webapp2.RequestHandler):
 
 class CreateArticleForm(webapp2.RequestHandler):
   def get(self):
-    user = users.get_current_user()
-    if user:
-      greeting = "<span class=\"signed-in\"> %s</span>" % user.nickname()
-      template_values = {
-              'greeting': greeting,
-              'user': user.nickname(),
-              }
+    #user = users.get_current_user()
+    #Pull user data from cookies
+    serialized_credentials = self.request.cookies.get('credentials')
+    user_id = self.request.cookies.get('user_id')
+    user_name = urllib.unquote(self.request.cookies.get('user_name', ''))
+    error = urllib.unquote(self.request.cookies.get('error', ''))
+	
+    #Checking cookies for login info
+    if error:
+      greeting = 'Sign in with: <a id="not-signed-in" class="sign-in" href="/auth">Login</a>'
+      nickname = ''
+    elif user_id:
+      nickname = user_name
+      greeting = ('<div class="signed-in" nickname="%s"> %s <a class="sign-out" href="%s">(sign out)</a></div>' % (nickname, nickname, "/logout"))
     else:
+      greeting = 'Sign in with: <a id="not-signed-in" class="sign-in" href="/auth">Login</a>'
+      nickname = ''
+	
+    if nickname == '':
       if 'X-Requested-With' in self.request.headers:
         return self.error(500)
       else:
-        return self.redirect(users.create_login_url("/create-article"))
+        return self.redirect('/auth')
       
     self.response.out.write("""
           <div id="%s" class="center-stage">
@@ -361,13 +319,19 @@ class CreateArticleForm(webapp2.RequestHandler):
 
 class PublishArticle(webapp2.RequestHandler):
   def post(self):
+    #Pull user data from cookies
+    serialized_credentials = self.request.cookies.get('credentials')
+    user_id = self.request.cookies.get('user_id')
+    user_name = urllib.unquote(self.request.cookies.get('user_name', ''))
+    error = urllib.unquote(self.request.cookies.get('error', ''))
+	
     if self.request.get('id') is not '':
       article_id = int(self.request.get('id'))
       article = Articles(parent=archive_key()).get_by_id(article_id, parent=archive_key())
     else:
       article = Articles(parent=archive_key())
-
-    article.author = users.get_current_user().nickname()
+    #must be logged in so the author must be
+    article.author = user_name #users.get_current_user().nickname()
     article.embed = self.request.get('embed-code')
     article.title = self.request.get('title')
     article.content = self.request.get('content')
@@ -383,10 +347,30 @@ class EditArticleForm(webapp2.RequestHandler):
     article_id = int(self.request.get('id'))
     article = Articles(parent=archive_key()).get_by_id(article_id, parent=archive_key())
     
-    user = users.get_current_user()
-    if not user:
-      return self.redirect(users.create_login_url("/"))
-
+    #user = users.get_current_user()
+    #if not user:
+    #  return self.redirect('/auth')
+	
+	#pull user info
+    serialized_credentials = self.request.cookies.get('credentials')
+    user_id = self.request.cookies.get('user_id')
+    user_name = urllib.unquote(self.request.cookies.get('user_name', ''))
+    error = urllib.unquote(self.request.cookies.get('error', ''))
+	
+	#check login
+    if error:
+      greeting = 'Sign in with: <a id="not-signed-in" class="sign-in" href="/auth">Login</a>'
+      nickname = ''
+    elif user_id:
+      nickname = user_name
+      greeting = ('<div class="signed-in" nickname="%s"> %s <a class="sign-out" href="%s">(sign out)</a></div>' % (nickname, nickname, "/logout"))
+    else:
+      greeting = 'Sign in with: <a id="not-signed-in" class="sign-in" href="/auth">Login</a>'
+      nickname = ''
+	
+    if nickname == '':
+        return self.redirect('/auth')
+	
     self.response.out.write("""
         <div id="%s-id-%s" class="center-stage">
           <form action="/publish-it?id=%s" method="post">
@@ -418,7 +402,8 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/test', MainPage),
 							   ('/auth', MainPage),
                                ('/publish-it', PublishArticle),
-							   webapp2.Route(r'/login/<:.*>', Login, handler_method='any')],
+							   webapp2.Route(r'/login/<:.*>', Login, handler_method='any'),
+							   webapp2.Route(r'/logout', MainPage)],
                                 debug=True)
 
 								
